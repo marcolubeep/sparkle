@@ -151,4 +151,94 @@
         .location-tag {
             background: var(--accent-yellow);
             color: #000;
-            padding
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-blue);
+            color: white;
+            padding: 60px 5% 30px;
+            text-align: center;
+        }
+
+        .footer-content h2 { margin-bottom: 20px; }
+        
+        .contact-details {
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <img src="preview.webp" alt="Sparkle Cleaning MK Logo">
+            <span class="brand-name">Sparkle Cleaning MK</span>
+        </div>
+        <nav>
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <span class="location-tag">SERVICING MILTON KEYNES & SURROUNDING AREAS</span>
+        <h1>Reliable Cleaning for Your Home & Office</h1>
+        <p>Expert cleaning services tailored to your needs. We bring the sparkle back to your space with professional care and a friendly smile.</p>
+        <a href="#contact" class="cta-button">Book Your Clean Today</a>
+    </section>
+
+    <h2 class="section-title" id="services">Our Services</h2>
+    <div class="services-grid">
+        <div class="card">
+            <h3>Domestic Cleaning</h3>
+            <p>From weekly maintenance to deep spring cleans, we keep your home spotless and fresh.</p>
+        </div>
+        <div class="card">
+            <h3>Office Cleaning</h3>
+            <p>Professional workspace sanitization to keep your team healthy and productive.</p>
+        </div>
+        <div class="card">
+            <h3>End of Tenancy</h3>
+            <p>Moving out? We ensure the property is perfect for the next inspection.</p>
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <h2>Get in Touch</h2>
+            <p>Ready for a cleaner space? Contact <strong>Sparkle Cleaning MK</strong> for a free quote.</p>
+            <div class="contact-details">
+                <p>📞 Phone: <a href="tel:+447000000000" style="color: var(--accent-yellow); text-decoration: none;">07XXX XXXXXX</a></p>
+                <p>📧 Email: <a href="mailto:info@sparklecleaningmk.co.uk" style="color: var(--accent-yellow); text-decoration: none;">info@sparklecleaningmk.co.uk</a></p>
+                <p>📍 Milton Keynes, United Kingdom</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2024 Sparkle Cleaning MK. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>
