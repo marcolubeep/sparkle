@@ -627,17 +627,37 @@ nav {
 
 <script>
 /* ════════════════════════════════════
-   STATE & STORAGE
+   SUPABASE CONFIG
+════════════════════════════════════ */
+const SUPABASE_URL = 'https://uefmddsvlmacmyunnswv.supabase.co';
+const SUPABASE_KEY = 'sb_secret_gRkLH2K5Wmt9QzQ4tZysKw_L8A5bHMj';
+const TABLE = 'bookings';
+
+async function sbFetch(method, body, filters) {
+  let url = `${SUPABASE_URL}/rest/v1/${TABLE}`;
+  if (filters) url += '?' + filters;
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) { const t = await res.text(); throw new Error(t); }
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+/* ════════════════════════════════════
+   STATE
 ════════════════════════════════════ */
 const ADMIN_PW = 'sparkle2025';
 let currentStep = 1;
 let adminFilter = 'all';
 let bookingData = {};
-
-function getBookings() {
-  try { return JSON.parse(localStorage.getItem('smk_bookings') || '[]'); } catch { return []; }
-}
-function saveBookings(arr) { localStorage.setItem('smk_bookings', JSON.stringify(arr)); }
 
 /* ════════════════════════════════════
    NAV
@@ -808,7 +828,7 @@ function formatExpiry(el) {
   el.value = v;
 }
 
-function submitBooking() {
+async function submitBooking() {
   const num = document.getElementById('card-num').value.replace(/\s/g,'');
   const exp = document.getElementById('card-exp').value;
   const cvc = document.getElementById('card-cvc').value;
@@ -823,26 +843,40 @@ function submitBooking() {
   const btn = document.getElementById('pay-btn');
   btn.disabled = true; btn.textContent = 'Processing…';
 
-  setTimeout(() => {
+  try {
     const ref = 'SMK-' + Math.random().toString(36).substr(2,6).toUpperCase();
     const booking = {
-      ref, ...bookingData,
-      status: 'paid',
-      createdAt: new Date().toISOString(),
+      ref,
+      service: bookingData.service,
+      frequency: bookingData.frequency,
+      size: bookingData.size,
+      name: bookingData.name,
       fname: document.getElementById('fname').value,
       lname: document.getElementById('lname').value,
+      email: bookingData.email,
+      phone: bookingData.phone,
+      address: bookingData.address,
+      date: bookingData.date,
+      time: bookingData.time,
+      notes: bookingData.notes,
+      total: bookingData.total,
+      subtotal: bookingData.subtotal,
+      discount: bookingData.discount,
+      discount_pct: bookingData.discountPct,
+      status: 'paid',
     };
-    const bookings = getBookings();
-    bookings.unshift(booking);
-    saveBookings(bookings);
-
-    // show success
+    await sbFetch('POST', booking);
     [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
     document.getElementById('step-indicator').style.display = 'none';
     document.getElementById('card-success').classList.add('active');
     document.getElementById('booking-ref-display').textContent = ref;
-    btn.disabled = false;
-  }, 1800);
+  } catch(e) {
+    errEl.textContent = 'Payment failed — please try again or contact us.';
+    errEl.style.display = 'block';
+    console.error(e);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Pay & Confirm Booking';
 }
 
 function resetBooking() {
@@ -890,79 +924,77 @@ function setFilter(f) {
   renderBookings();
 }
 
-function renderStats() {
-  const all = getBookings();
-  const pending = all.filter(b => b.status === 'pending').length;
-  const confirmed = all.filter(b => b.status === 'confirmed').length;
-  const paid = all.filter(b => b.status === 'paid').length;
-  const revenue = all.filter(b => b.status === 'paid').reduce((s,b) => s + (b.total||0), 0);
-  document.getElementById('stats-grid').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${all.length}</div><div class="stat-label">Total bookings</div></div>
-    <div class="stat-card"><div class="stat-num">${pending}</div><div class="stat-label">Pending</div></div>
-    <div class="stat-card"><div class="stat-num">${confirmed}</div><div class="stat-label">Confirmed</div></div>
-    <div class="stat-card"><div class="stat-num">£${revenue}</div><div class="stat-label">Revenue (paid)</div></div>
-  `;
+async function renderStats() {
+  try {
+    const all = await sbFetch('GET', null, 'order=created_at.desc');
+    const pending = all.filter(b => b.status === 'pending').length;
+    const confirmed = all.filter(b => b.status === 'confirmed').length;
+    const revenue = all.filter(b => b.status === 'paid').reduce((s,b) => s + (b.total||0), 0);
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${all.length}</div><div class="stat-label">Total bookings</div></div>
+      <div class="stat-card"><div class="stat-num">${pending}</div><div class="stat-label">Pending</div></div>
+      <div class="stat-card"><div class="stat-num">${confirmed}</div><div class="stat-label">Confirmed</div></div>
+      <div class="stat-card"><div class="stat-num">£${revenue}</div><div class="stat-label">Revenue (paid)</div></div>
+    `;
+  } catch(e) { console.error('Stats error:', e); }
 }
 
-function renderBookings() {
-  let data = getBookings();
-  const sort = document.getElementById('admin-sort')?.value || 'newest';
-
-  if (sort === 'oldest') data = [...data].reverse();
-  else if (sort === 'date') data = [...data].sort((a,b) => new Date(a.date) - new Date(b.date));
-
-  if (adminFilter !== 'all') data = data.filter(b => b.status === adminFilter);
-
+async function renderBookings() {
   const tbody = document.getElementById('bookings-body');
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><div>No bookings found</div></div></td></tr>`;
-    return;
+  tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon" style="font-size:1.5rem;">⏳</div><div>Loading bookings…</div></div></td></tr>`;
+  try {
+    const sort = document.getElementById('admin-sort')?.value || 'newest';
+    let orderParam = 'order=created_at.desc';
+    if (sort === 'oldest') orderParam = 'order=created_at.asc';
+    else if (sort === 'date') orderParam = 'order=date.asc';
+    let filters = orderParam;
+    if (adminFilter !== 'all') filters += `&status=eq.${adminFilter}`;
+
+    const data = await sbFetch('GET', null, filters);
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><div>No bookings found</div></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map(b => {
+      const dateStr = b.date ? new Date(b.date).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '—';
+      const badge = {
+        pending: '<span class="badge badge-pending">Pending</span>',
+        confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
+        paid: '<span class="badge badge-paid">Paid</span>',
+        cancelled: '<span class="badge badge-cancelled">Cancelled</span>',
+      }[b.status] || '';
+
+      let actions = '';
+      if (b.status === 'pending') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','confirmed')">Confirm</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
+      else if (b.status === 'confirmed') actions = `<button class="action-btn paid" onclick="updateStatus('${b.ref}','paid')">Mark paid</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
+      else if (b.status === 'paid') actions = `<button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Refund</button>`;
+      else actions = '<span style="color:var(--muted);font-size:12px;">—</span>';
+
+      return `<tr>
+        <td style="font-weight:700; font-size:12px; color:var(--green-dark);">${b.ref}</td>
+        <td><div style="font-weight:700;">${b.name}</div><div style="font-size:12px;color:var(--muted);">${b.email}</div></td>
+        <td><div>${b.service}</div><div style="font-size:12px;color:var(--muted);">${b.frequency||''}</div></td>
+        <td>${dateStr}<br><span style="font-size:12px;color:var(--muted);">${b.time||''}</span></td>
+        <td style="font-weight:700;">£${b.total||'—'}</td>
+        <td>${badge}</td>
+        <td><div class="action-btns">${actions}</div></td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load bookings. Check your Supabase connection.</div></div></td></tr>`;
+    console.error('Render error:', e);
   }
-  tbody.innerHTML = data.map(b => {
-    const dateStr = b.date ? new Date(b.date).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '—';
-    const badge = {
-      pending: '<span class="badge badge-pending">Pending</span>',
-      confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
-      paid: '<span class="badge badge-paid">Paid</span>',
-      cancelled: '<span class="badge badge-cancelled">Cancelled</span>',
-    }[b.status] || '';
-
-    let actions = '';
-    if (b.status === 'pending') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','confirmed')">Confirm</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
-    else if (b.status === 'confirmed') actions = `<button class="action-btn paid" onclick="updateStatus('${b.ref}','paid')">Mark paid</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
-    else if (b.status === 'paid') actions = `<button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Refund</button>`;
-    else actions = '<span style="color:var(--muted);font-size:12px;">—</span>';
-
-    return `<tr>
-      <td style="font-weight:700; font-size:12px; color:var(--green-dark);">${b.ref}</td>
-      <td><div style="font-weight:700;">${b.name}</div><div style="font-size:12px;color:var(--muted);">${b.email}</div></td>
-      <td><div>${b.service}</div><div style="font-size:12px;color:var(--muted);">${b.frequency||''}</div></td>
-      <td>${dateStr}<br><span style="font-size:12px;color:var(--muted);">${b.time||''}</span></td>
-      <td style="font-weight:700;">£${b.total||'—'}</td>
-      <td>${badge}</td>
-      <td><div class="action-btns">${actions}</div></td>
-    </tr>`;
-  }).join('');
 }
 
-function updateStatus(ref, status) {
-  const bookings = getBookings();
-  const idx = bookings.findIndex(b => b.ref === ref);
-  if (idx > -1) { bookings[idx].status = status; saveBookings(bookings); }
-  renderStats(); renderBookings();
+async function updateStatus(ref, status) {
+  try {
+    await sbFetch('PATCH', { status }, `ref=eq.${ref}`);
+    renderStats(); renderBookings();
+  } catch(e) {
+    alert('Could not update status. Please try again.'); console.error(e);
+  }
 }
-
-/* ── Seed demo data if empty ── */
-(function seedDemo() {
-  if (getBookings().length > 0) return;
-  const demo = [
-    { ref:'SMK-DEMO01', service:'Domestic Cleaning', frequency:'Weekly', size:'2 bed', name:'Sarah Johnson', fname:'Sarah', lname:'Johnson', email:'sarah@example.com', phone:'07700900001', address:'14 Campbell Park, MK9 3AA', date:'2025-06-10', time:'9:00 AM', notes:'Please be quiet — baby napping.', total:63, status:'confirmed', createdAt:'2025-06-01T09:12:00Z' },
-    { ref:'SMK-DEMO02', service:'Deep Cleaning', frequency:'One-off', size:'3 bed', name:'Tom Wheeler', fname:'Tom', lname:'Wheeler', email:'tom@example.com', phone:'07700900002', address:'7 Bletchley Road, MK3 5BT', date:'2025-06-14', time:'8:00 AM', notes:'', total:185, status:'paid', createdAt:'2025-06-02T14:30:00Z' },
-    { ref:'SMK-DEMO03', service:'Office Cleaning', frequency:'Fortnightly', size:'—', name:'Apex Ltd', fname:'Apex', lname:'Ltd', email:'office@apex.co.uk', phone:'07700900003', address:'Unit 4, Sunrise Pk, MK14 6LS', date:'2025-06-16', time:'7:00 AM', notes:'Key left at reception.', total:72, status:'pending', createdAt:'2025-06-03T10:05:00Z' },
-    { ref:'SMK-DEMO04', service:'Domestic Cleaning', frequency:'One-off', size:'Studio / 1 bed', name:'Priya Patel', fname:'Priya', lname:'Patel', email:'priya@example.com', phone:'07700900004', address:'3 Caldecotte Lake Dr, MK7 8HP', date:'2025-06-18', time:'11:00 AM', notes:'', total:60, status:'cancelled', createdAt:'2025-06-03T16:22:00Z' },
-  ];
-  saveBookings(demo);
-})();
 </script>
 </body>
 </html>
