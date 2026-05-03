@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkle MK — Book a Clean</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green: #3a9e7e;
+  --green-light: #e8f7f2;
+  --green-dark: #1f6b53;
+  --green-mid: #2d8566;
+  --sky: #d4eef8;
+  --text: #1a2e25;
+  --muted: #6b8f7e;
+  --white: #ffffff;
+  --bg: #f5fbf8;
+  --border: rgba(58,158,126,0.18);
+  --shadow: 0 2px 20px rgba(58,158,126,0.10);
+  --error: #c0392b;
+  --error-bg: #fdf0ef;
+  --success: #1f6b53;
+  --success-bg: #e8f7f2;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Nunito', sans-serif; font-weight: 400; color: var(--text); background: var(--bg); overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo svg { width: 36px; height: 36px; }
+.nav-logo span { font-weight: 800; font-size: 1.15rem; color: var(--text); }
+.nav-logo span em { font-style: normal; color: var(--green); }
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 0.9rem; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--green); }
+.nav-admin-btn {
+  background: var(--text); color: white; text-decoration: none;
+  padding: 8px 18px; border-radius: 50px; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; border: none; transition: background 0.2s;
+}
+.nav-admin-btn:hover { background: var(--green-dark); }
+
+/* ── PAGE SECTIONS ── */
+.page { display: none; padding-top: 80px; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ── BOOKING PAGE HERO ── */
+.booking-hero {
+  background: linear-gradient(135deg, #d4eef8 0%, #e8f7f2 50%, #c8edd8 100%);
+  padding: 3.5rem 1.5rem 2.5rem;
+  text-align: center;
+}
+.booking-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 2.6rem); color: var(--text); margin-bottom: 0.5rem; }
+.booking-hero h1 span { color: var(--green); }
+.booking-hero p { color: var(--muted); font-size: 1rem; max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+/* ── BOOKING FORM ── */
+.booking-wrapper { max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+.step-indicator {
+  display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2.5rem;
+}
+.step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  background: white; border: 2px solid var(--border); color: var(--muted);
+  transition: all 0.3s;
+}
+.step.active .step-circle { background: var(--green); border-color: var(--green); color: white; }
+.step.done .step-circle { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+.step-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.step.active .step-label { color: var(--green-dark); }
+.step-line { flex: 1; height: 2px; background: var(--border); margin: 0; position: relative; top: -10px; }
+.step-line.done { background: var(--green); }
+
+/* FORM CARDS */
+.form-card {
+  background: white; border-radius: 20px; padding: 2rem;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  margin-bottom: 1.5rem; display: none;
+}
+.form-card.active { display: block; animation: fadeUp 0.3s ease both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+.form-card h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 1.5rem; color: var(--text); }
+
+/* SERVICE SELECTOR */
+.service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.service-option { position: relative; }
+.service-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.service-option label {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 6px; padding: 1.1rem 1rem;
+  border: 1.5px solid var(--border); border-radius: 14px;
+  cursor: pointer; transition: all 0.2s; background: white;
+}
+.service-option label:hover { border-color: var(--green); background: var(--green-light); }
+.service-option input:checked + label { border-color: var(--green); background: var(--green-light); }
+.service-option input:checked + label .service-check { opacity: 1; }
+.svc-icon { font-size: 1.4rem; }
+.svc-name { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.svc-price { font-size: 0.82rem; color: var(--green-dark); font-weight: 600; }
+.svc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+.service-check { position: absolute; top: 10px; right: 10px; width: 18px; height: 18px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.service-check::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+
+/* FREQUENCY */
+.freq-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+.freq-option { position: relative; }
+.freq-option input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.freq-option label {
+  display: block; padding: 0.8rem 0.5rem; text-align: center;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  cursor: pointer; transition: all 0.2s; font-weight: 700; font-size: 0.88rem;
+}
+.freq-option input:checked + label { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+.freq-option label:hover { border-color: var(--green); }
+.freq-discount { display: block; font-size: 11px; font-weight: 600; color: var(--green); margin-top: 2px; }
+
+/* FORM FIELDS */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.form-row.full { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px;
+  font-family: 'Nunito', sans-serif; font-size: 0.95rem; color: var(--text);
+  background: white; outline: none; transition: border-color 0.2s;
+  width: 100%;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--green); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-group.error input,
+.form-group.error select { border-color: var(--error); }
+.field-error { font-size: 12px; color: var(--error); margin-top: 2px; display: none; }
+.form-group.error .field-error { display: block; }
+
+/* TIME SLOTS */
+.time-slots { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; margin-top: 0.5rem; }
+.time-slot { position: relative; }
+.time-slot input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.time-slot label {
+  display: block; text-align: center; padding: 8px 4px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  cursor: pointer; font-size: 0.82rem; font-weight: 700; transition: all 0.2s;
+}
+.time-slot input:checked + label { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+.time-slot label:hover { border-color: var(--green); }
+.time-slot label.unavailable { opacity: 0.4; cursor: not-allowed; background: #f5f5f5; }
+
+/* SUMMARY CARD */
+.summary-box {
+  background: var(--green-light); border-radius: 14px;
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  border: 1px solid rgba(58,158,126,0.2);
+}
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 0.92rem; }
+.summary-row.total { border-top: 1.5px solid rgba(58,158,126,0.25); padding-top: 10px; margin-top: 5px; font-weight: 800; font-size: 1.05rem; color: var(--green-dark); }
+.summary-label { color: var(--muted); }
+.summary-value { font-weight: 700; color: var(--text); }
+
+/* PAYMENT SECTION */
+.payment-area {
+  background: white; border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 1.25rem; margin-bottom: 1.5rem;
+}
+.payment-title { font-weight: 800; font-size: 0.95rem; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+.stripe-badge { display: inline-flex; align-items: center; gap: 5px; background: #f0f4ff; border-radius: 6px; padding: 3px 8px; font-size: 11px; color: #6772e5; font-weight: 700; }
+.card-field-mock {
+  border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 14px;
+  font-size: 0.9rem; color: var(--muted); margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px; cursor: text;
+  transition: border-color 0.2s;
+}
+.card-field-mock:focus-within { border-color: var(--green); }
+.card-field-mock input { border: none; outline: none; flex: 1; font-family: 'Nunito', sans-serif; font-size: 0.9rem; color: var(--text); background: transparent; }
+.card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.secure-note { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 0.75rem; }
+.secure-note strong { color: var(--text); }
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%; padding: 14px 20px; border-radius: 50px;
+  background: var(--green); color: white; border: none;
+  font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem;
+  cursor: pointer; transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 18px rgba(58,158,126,0.3);
+}
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { background: var(--muted); box-shadow: none; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  width: 100%; padding: 12px 20px; border-radius: 50px;
+  background: white; color: var(--green); border: 2px solid var(--green);
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 0.75rem;
+}
+.btn-secondary:hover { background: var(--green-light); }
+.btn-back { background: none; border: none; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer; padding: 0; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 5px; }
+.btn-back:hover { color: var(--green); }
+
+/* SUCCESS STATE */
+.success-card {
+  background: white; border-radius: 20px; padding: 3rem 2rem;
+  text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow);
+}
+.success-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--green-light); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem; font-size: 2rem;
+}
+.success-card h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.75rem; }
+.success-card p { color: var(--muted); line-height: 1.65; max-width: 360px; margin: 0 auto 0.5rem; }
+.booking-ref { display: inline-block; background: var(--green-light); color: var(--green-dark); font-weight: 800; padding: 8px 20px; border-radius: 50px; font-size: 0.95rem; margin: 1rem 0; letter-spacing: 0.05em; }
+
+/* ── ADMIN PAGE ── */
+.admin-login-wrapper { max-width: 400px; margin: 4rem auto; padding: 0 1.5rem; }
+.admin-login-card { background: white; border-radius: 20px; padding: 2.5rem; border: 1px solid var(--border); box-shadow: var(--shadow); text-align: center; }
+.admin-login-card h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.5rem; }
+.admin-login-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+.login-error { background: var(--error-bg); color: var(--error); padding: 10px 14px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; margin-bottom: 1rem; display: none; }
+
+.admin-dashboard { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.admin-header h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; }
+.admin-header-right { display: flex; gap: 0.75rem; align-items: center; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card {
+  background: white; border-radius: 14px; padding: 1.25rem;
+  border: 1px solid var(--border); text-align: center;
+}
+.stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--green); font-weight: 700; }
+.stat-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-top: 2px; }
+
+.filter-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.filter-btn {
+  padding: 7px 16px; border-radius: 50px; font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer; border: 1.5px solid var(--border);
+  background: white; color: var(--muted); transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active { background: var(--green); border-color: var(--green); color: white; }
+
+.bookings-table-wrap { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+.bookings-table { width: 100%; border-collapse: collapse; }
+.bookings-table th { background: var(--green-light); color: var(--green-dark); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 16px; text-align: left; }
+.bookings-table td { padding: 13px 16px; border-top: 1px solid rgba(58,158,126,0.1); font-size: 0.9rem; vertical-align: middle; }
+.bookings-table tr:hover td { background: var(--bg); }
+
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 50px;
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.badge-pending { background: #fff8e6; color: #b8860b; }
+.badge-confirmed { background: var(--green-light); color: var(--green-dark); }
+.badge-paid { background: #e6f4ff; color: #1a5fa0; }
+.badge-cancelled { background: #fdf0ef; color: var(--error); }
+
+.action-btns { display: flex; gap: 6px; }
+.action-btn {
+  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 1.5px solid; font-family: 'Nunito', sans-serif;
+  transition: all 0.2s;
+}
+.action-btn.confirm { border-color: var(--green); color: var(--green); background: white; }
+.action-btn.confirm:hover { background: var(--green); color: white; }
+.action-btn.cancel { border-color: var(--error); color: var(--error); background: white; }
+.action-btn.cancel:hover { background: var(--error); color: white; }
+.action-btn.paid { border-color: #1a5fa0; color: #1a5fa0; background: white; }
+.action-btn.paid:hover { background: #1a5fa0; color: white; }
+
+.empty-state { text-align: center; padding: 3rem; color: var(--muted); }
+.empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+.logout-btn {
+  background: none; border: 1.5px solid var(--border); color: var(--muted);
+  padding: 8px 16px; border-radius: 50px; font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+}
+.logout-btn:hover { border-color: var(--error); color: var(--error); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  nav { padding: 0.85rem 1.2rem; }
+  .nav-links { gap: 0.8rem; }
+  .nav-links a { font-size: 0.8rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .time-slots { grid-template-columns: repeat(3,1fr); }
+  .bookings-table th:nth-child(4), .bookings-table td:nth-child(4) { display: none; }
+  .bookings-table th:nth-child(5), .bookings-table td:nth-child(5) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ── -->
+<nav>
+  <a class="nav-logo" href="#" onclick="showPage('booking')">
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="18" fill="#e8f7f2"/>
+      <path d="M11 18c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7-7-3.13-7-7z" fill="#3a9e7e" opacity="0.3"/>
+      <path d="M14 18c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4z" fill="#3a9e7e"/>
+      <path d="M18 10 L19.5 14 L23.5 14 L20.5 16.5 L21.5 20.5 L18 18 L14.5 20.5 L15.5 16.5 L12.5 14 L16.5 14 Z" fill="white" opacity="0.9"/>
+    </svg>
+    <span>Sparkle <em>MK</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="#" id="nav-book" class="active" onclick="showPage('booking'); updateNav('nav-book')">Book Online</a>
+    <button class="nav-admin-btn" onclick="showPage('admin'); updateNav(null)">Admin ↗</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     BOOKING PAGE
+══════════════════════════════════════════ -->
+<div id="page-booking" class="page active">
+
+  <div class="booking-hero">
+    <h1>Book your <span>sparkle</span></h1>
+    <p>Choose your service, pick a time, and we'll do the rest. Secure payment online.</p>
+  </div>
+
+  <div class="booking-wrapper">
+
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator" id="step-indicator">
+      <div class="step active" id="step-dot-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Service</div>
+      </div>
+      <div class="step-line" id="line-1"></div>
+      <div class="step" id="step-dot-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Details</div>
+      </div>
+      <div class="step-line" id="line-2"></div>
+      <div class="step" id="step-dot-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Payment</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: SERVICE SELECTION ── -->
+    <div class="form-card active" id="card-1">
+      <h2>What do you need cleaned?</h2>
+
+      <div class="service-grid">
+        <div class="service-option">
+          <input type="radio" name="service" id="svc-domestic" value="Domestic Cleaning" data-price="60" data-unit="/visit">
+          <label for="svc-domestic">
+            <span class="svc-icon">🏠</span>
+            <span class="svc-name">Domestic Cleaning</span>
+            <span class="svc-price">From £60/visit</span>
+            <span class="svc-desc">Regular home clean</span>
+            <span class="service-check"></span>
+          </label>
+        </div>
+        <div class="service-option">
+          <input type="radio" name="service" id="svc-office" value="Office Cleaning" data-price="80" data-unit="/visit">
+          <label for="svc-office">
+            <span class="svc-icon">🏢</span>
+            <span class="svc-name">Office Cleaning</span>
+            <span class="svc-price">From £80/visit</span>
+            <span class="svc-desc">Workspace clean</span>
+            <span class="service-check"></span>
+          </label>
+        </div>
+        <div class="service-option">
+          <input type="radio" name="service" id="svc-deep" value="Deep Cleaning" data-price="150" data-unit=" flat">
+          <label for="svc-deep">
+            <span class="svc-icon">✨</span>
+            <span class="svc-name">Deep Cleaning</span>
+            <span class="svc-price">From £150</span>
+            <span class="svc-desc">Top-to-bottom refresh</span>
+            <span class="service-check"></span>
+          </label>
+        </div>
+      </div>
+
+      <div id="freq-section" style="display:none; margin-bottom:1.5rem;">
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label>Frequency</label>
+        </div>
+        <div class="freq-grid">
+          <div class="freq-option">
+            <input type="radio" name="frequency" id="freq-weekly" value="Weekly" data-discount="15">
+            <label for="freq-weekly">Weekly <span class="freq-discount">Save 15%</span></label>
+          </div>
+          <div class="freq-option">
+            <input type="radio" name="frequency" id="freq-fort" value="Fortnightly" data-discount="10">
+            <label for="freq-fort">Fortnightly <span class="freq-discount">Save 10%</span></label>
+          </div>
+          <div class="freq-option">
+            <input type="radio" name="frequency" id="freq-one" value="One-off" data-discount="0" checked>
+            <label for="freq-one">One-off <span class="freq-discount">&nbsp;</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div id="size-section" style="display:none; margin-bottom:1.5rem;">
+        <div class="form-group">
+          <label>Property size</label>
+          <select id="property-size">
+            <option value="" disabled selected>Select size…</option>
+            <option value="Studio / 1 bed" data-add="0">Studio / 1 bed (+£0)</option>
+            <option value="2 bed" data-add="20">2 bed (+£20)</option>
+            <option value="3 bed" data-add="35">3 bed (+£35)</option>
+            <option value="4+ bed" data-add="55">4+ bed (+£55)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="price-preview" style="display:none; margin-bottom:1.5rem; padding:1rem 1.25rem; background:var(--green-light); border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="color:var(--muted); font-size:0.9rem;">Estimated price</span>
+        <span id="price-preview-value" style="font-weight:800; font-size:1.2rem; color:var(--green-dark);">£—</span>
+      </div>
+
+      <div id="step1-error" class="login-error" style="text-align:left;">Please select a service to continue.</div>
+      <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+    </div>
+
+    <!-- ── STEP 2: DATE / ADDRESS / DETAILS ── -->
+    <div class="form-card" id="card-2">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <h2>Your details & preferred time</h2>
+
+      <div class="form-row">
+        <div class="form-group" id="fg-fname">
+          <label>First name</label>
+          <input type="text" id="fname" placeholder="Jane">
+          <span class="field-error">Required</span>
+        </div>
+        <div class="form-group" id="fg-lname">
+          <label>Last name</label>
+          <input type="text" id="lname" placeholder="Smith">
+          <span class="field-error">Required</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" id="fg-email">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="jane@example.com">
+          <span class="field-error">Valid email required</span>
+        </div>
+        <div class="form-group" id="fg-phone">
+          <label>Phone</label>
+          <input type="tel" id="phone" placeholder="07700 900 000">
+          <span class="field-error">Required</span>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group" id="fg-address">
+          <label>Address</label>
+          <input type="text" id="address" placeholder="12 Any Street, Milton Keynes">
+          <span class="field-error">Required</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" id="fg-postcode">
+          <label>Postcode</label>
+          <input type="text" id="postcode" placeholder="MK1 1AA">
+          <span class="field-error">Required</span>
+        </div>
+        <div class="form-group" id="fg-date">
+          <label>Preferred date</label>
+          <input type="date" id="pref-date">
+          <span class="field-error">Please select a date</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Preferred start time</label>
+        <div class="time-slots">
+          <div class="time-slot"><input type="radio" name="time" id="t1" value="8:00 AM"><label for="t1">8:00 AM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t2" value="9:00 AM"><label for="t2">9:00 AM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t3" value="10:00 AM"><label for="t3">10:00 AM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t4" value="11:00 AM"><label for="t4">11:00 AM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t5" value="12:00 PM"><label for="t5">12:00 PM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t6" value="1:00 PM"><label for="t6">1:00 PM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t7" value="2:00 PM"><label for="t7">2:00 PM</label></div>
+          <div class="time-slot"><input type="radio" name="time" id="t8" value="3:00 PM"><label for="t8">3:00 PM</label></div>
+        </div>
+      </div>
+      <div id="time-error" class="login-error" style="text-align:left; display:none;">Please select a time slot.</div>
+
+      <div class="form-row full" style="margin-top:0.5rem;">
+        <div class="form-group">
+          <label>Additional notes (optional)</label>
+          <textarea id="notes" placeholder="Access instructions, pets, specific areas to focus on…"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goStep(3)" style="margin-top:0.5rem;">Continue →</button>
+    </div>
+
+    <!-- ── STEP 3: PAYMENT ── -->
+    <div class="form-card" id="card-3">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <h2>Review & pay</h2>
+
+      <div class="summary-box" id="booking-summary"></div>
+
+      <div class="payment-area">
+        <div class="payment-title">
+          Payment details
+          <span class="stripe-badge">🔒 Powered by Stripe</span>
+        </div>
+        <div class="card-field-mock">
+          <input type="text" id="card-num" placeholder="Card number" maxlength="19" oninput="formatCard(this)">
+          <span style="font-size:16px; color:var(--muted);">💳</span>
+        </div>
+        <div class="card-row">
+          <div class="card-field-mock">
+            <input type="text" id="card-exp" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+          </div>
+          <div class="card-field-mock">
+            <input type="text" id="card-cvc" placeholder="CVC" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+          </div>
+        </div>
+        <div class="card-field-mock">
+          <input type="text" id="card-name" placeholder="Name on card">
+        </div>
+        <div class="secure-note">🔐 <strong>256-bit SSL encrypted.</strong> Your card details are never stored on our servers.</div>
+      </div>
+
+      <div id="pay-error" class="login-error" style="text-align:left;">Please complete all card details.</div>
+      <button class="btn-primary" id="pay-btn" onclick="submitBooking()">Pay & Confirm Booking</button>
+      <div style="text-align:center; margin-top:0.75rem; font-size:0.8rem; color:var(--muted);">
+        By booking you agree to our cancellation policy. 24h notice required for a full refund.
+      </div>
+    </div>
+
+    <!-- ── SUCCESS STATE ── -->
+    <div class="form-card" id="card-success">
+      <div class="success-card">
+        <div class="success-icon">✨</div>
+        <h2>You're all booked!</h2>
+        <p>We'll send a confirmation email shortly. Our team is excited to make your space sparkle.</p>
+        <div class="booking-ref" id="booking-ref-display"></div>
+        <p style="margin-top:0.5rem; font-size:0.85rem;">Save your reference number in case you need to make changes.</p>
+        <button class="btn-secondary" style="width:auto; padding:12px 30px; margin-top:1.5rem;" onclick="resetBooking()">Book another clean</button>
+      </div>
+    </div>
+
+  </div><!-- /booking-wrapper -->
+</div><!-- /page-booking -->
+
+
+<!-- ══════════════════════════════════════════
+     ADMIN PAGE
+══════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+
+  <!-- LOGIN SCREEN -->
+  <div id="admin-login" class="admin-login-wrapper">
+    <div class="admin-login-card">
+      <h2>Admin Login</h2>
+      <p>Sparkle MK management portal</p>
+      <div id="login-error" class="login-error">Incorrect password. Please try again.</div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Password</label>
+        <input type="password" id="admin-pw" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign in</button>
+      <div style="margin-top:1.25rem; font-size:12px; color:var(--muted);">Demo password: <strong>sparkle2025</strong></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="admin-dashboard" class="admin-dashboard" style="display:none;">
+    <div class="admin-header">
+      <h1>Bookings Dashboard</h1>
+      <div class="admin-header-right">
+        <select id="admin-sort" onchange="renderBookings()" style="border:1.5px solid var(--border); border-radius:8px; padding:7px 12px; font-family:'Nunito',sans-serif; font-size:0.85rem; color:var(--text); background:white; outline:none; cursor:pointer;">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="date">By appointment</option>
+        </select>
+        <button class="logout-btn" onclick="doLogout()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">Pending</button>
+      <button class="filter-btn" data-filter="confirmed" onclick="setFilter('confirmed')">Confirmed</button>
+      <button class="filter-btn" data-filter="paid" onclick="setFilter('paid')">Paid</button>
+      <button class="filter-btn" data-filter="cancelled" onclick="setFilter('cancelled')">Cancelled</button>
+    </div>
+
+    <div class="bookings-table-wrap">
+      <table class="bookings-table">
+        <thead>
+          <tr>
+            <th>Ref</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Date & Time</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /page-admin -->
+
+<script>
+/* ════════════════════════════════════
+   STATE & STORAGE
+════════════════════════════════════ */
+const ADMIN_PW = 'sparkle2025';
+let currentStep = 1;
+let adminFilter = 'all';
+let bookingData = {};
+
+function getBookings() {
+  try { return JSON.parse(localStorage.getItem('smk_bookings') || '[]'); } catch { return []; }
+}
+function saveBookings(arr) { localStorage.setItem('smk_bookings', JSON.stringify(arr)); }
+
+/* ════════════════════════════════════
+   NAV
+════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (name === 'admin' && !sessionStorage.getItem('smk_auth')) {
+    document.getElementById('admin-login').style.display = '';
+    document.getElementById('admin-dashboard').style.display = 'none';
+  } else if (name === 'admin') {
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = '';
+    renderStats(); renderBookings();
+  }
+  window.scrollTo(0,0);
+}
+function updateNav(activeId) {
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  if (activeId) document.getElementById(activeId)?.classList.add('active');
+}
+
+/* ════════════════════════════════════
+   BOOKING STEPS
+════════════════════════════════════ */
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
+  if (n === 3) buildSummary();
+
+  [1,2,3].forEach(i => {
+    document.getElementById('card-' + i).classList.remove('active');
+    const dot = document.getElementById('step-dot-' + i);
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done');
+    if (i === n) dot.classList.add('active');
+    if (i < 3) {
+      const line = document.getElementById('line-' + i);
+      line.classList.toggle('done', i < n);
+    }
+  });
+  document.getElementById('card-' + n).classList.add('active');
+  currentStep = n;
+  window.scrollTo(0, document.getElementById('step-indicator').offsetTop - 100);
+}
+
+/* ── Step 1 logic ── */
+const radios = () => document.querySelectorAll('input[name="service"]');
+radios().forEach(r => r.addEventListener('change', onServiceChange));
+document.querySelectorAll('input[name="frequency"]').forEach(r => r.addEventListener('change', updatePrice));
+document.getElementById('property-size').addEventListener('change', updatePrice);
+
+function onServiceChange() {
+  const v = document.querySelector('input[name="service"]:checked')?.value;
+  const isDeep = v === 'Deep Cleaning';
+  document.getElementById('freq-section').style.display = isDeep ? 'none' : 'block';
+  document.getElementById('size-section').style.display = 'block';
+  document.getElementById('price-preview').style.display = 'flex';
+  document.getElementById('step1-error').style.display = 'none';
+  updatePrice();
+}
+
+function updatePrice() {
+  const svc = document.querySelector('input[name="service"]:checked');
+  const sizeEl = document.getElementById('property-size');
+  const freqEl = document.querySelector('input[name="frequency"]:checked');
+  if (!svc) return;
+  let base = parseFloat(svc.dataset.price || 0);
+  const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
+  const sizeAdd = parseFloat(sizeOpt?.dataset.add || 0);
+  const discount = freqEl ? parseFloat(freqEl.dataset.discount || 0) : 0;
+  let total = (base + sizeAdd) * (1 - discount/100);
+  document.getElementById('price-preview-value').textContent = '£' + Math.round(total);
+}
+
+function validateStep1() {
+  const svc = document.querySelector('input[name="service"]:checked');
+  if (!svc) { document.getElementById('step1-error').style.display = 'block'; return false; }
+  const sizeEl = document.getElementById('property-size');
+  if (sizeEl.style.display !== 'none' && !sizeEl.value) {
+    alert('Please select a property size.'); return false;
+  }
+  return true;
+}
+
+/* Set min date for date picker */
+const dateInput = document.getElementById('pref-date');
+const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+dateInput.min = tomorrow.toISOString().split('T')[0];
+
+function validateStep2() {
+  let ok = true;
+  const fields = [
+    ['fg-fname','fname', v => v.trim().length > 0],
+    ['fg-lname','lname', v => v.trim().length > 0],
+    ['fg-email','email', v => /^[^@]+@[^@]+\.[^@]+$/.test(v)],
+    ['fg-phone','phone', v => v.trim().length > 5],
+    ['fg-address','address', v => v.trim().length > 3],
+    ['fg-postcode','postcode', v => v.trim().length > 2],
+    ['fg-date','pref-date', v => !!v],
+  ];
+  fields.forEach(([gid, fid, fn]) => {
+    const el = document.getElementById(fid);
+    const grp = document.getElementById(gid);
+    if (!fn(el.value)) { grp.classList.add('error'); ok = false; }
+    else grp.classList.remove('error');
+  });
+  const time = document.querySelector('input[name="time"]:checked');
+  const timeErr = document.getElementById('time-error');
+  if (!time) { timeErr.style.display = 'block'; ok = false; } else timeErr.style.display = 'none';
+  return ok;
+}
+
+/* ── Summary ── */
+function buildSummary() {
+  const svc = document.querySelector('input[name="service"]:checked');
+  const freq = document.querySelector('input[name="frequency"]:checked');
+  const sizeEl = document.getElementById('property-size');
+  const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
+  const time = document.querySelector('input[name="time"]:checked');
+
+  let base = parseFloat(svc.dataset.price);
+  const sizeAdd = parseFloat(sizeOpt?.dataset.add || 0);
+  const discount = freq ? parseFloat(freq.dataset.discount || 0) : 0;
+  const subtotal = base + sizeAdd;
+  const discountAmt = Math.round(subtotal * discount / 100);
+  const total = subtotal - discountAmt;
+
+  bookingData = {
+    service: svc.value,
+    frequency: freq ? freq.value : 'One-off',
+    size: sizeEl.value || '—',
+    name: document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    address: document.getElementById('address').value + ', ' + document.getElementById('postcode').value,
+    date: document.getElementById('pref-date').value,
+    time: time?.value,
+    notes: document.getElementById('notes').value,
+    total: total,
+    subtotal: subtotal,
+    discount: discountAmt,
+    discountPct: discount,
+  };
+
+  const dateStr = new Date(bookingData.date).toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  document.getElementById('booking-summary').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value">${bookingData.service}</span></div>
+    <div class="summary-row"><span class="summary-label">Frequency</span><span class="summary-value">${bookingData.frequency}</span></div>
+    <div class="summary-row"><span class="summary-label">Property size</span><span class="summary-value">${bookingData.size}</span></div>
+    <div class="summary-row"><span class="summary-label">Date</span><span class="summary-value">${dateStr}</span></div>
+    <div class="summary-row"><span class="summary-label">Time</span><span class="summary-value">${bookingData.time}</span></div>
+    <div class="summary-row"><span class="summary-label">Address</span><span class="summary-value">${bookingData.address}</span></div>
+    ${discountAmt > 0 ? `<div class="summary-row"><span class="summary-label">Discount (${discount}%)</span><span class="summary-value" style="color:var(--green-dark)">−£${discountAmt}</span></div>` : ''}
+    <div class="summary-row total"><span>Total</span><span>£${total}</span></div>
+  `;
+  document.getElementById('pay-btn').textContent = `Pay £${total} & Confirm Booking`;
+}
+
+/* ── Payment formatting ── */
+function formatCard(el) {
+  el.value = el.value.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2,4);
+  el.value = v;
+}
+
+function submitBooking() {
+  const num = document.getElementById('card-num').value.replace(/\s/g,'');
+  const exp = document.getElementById('card-exp').value;
+  const cvc = document.getElementById('card-cvc').value;
+  const name = document.getElementById('card-name').value;
+  const errEl = document.getElementById('pay-error');
+
+  if (num.length < 15 || exp.length < 7 || cvc.length < 3 || !name.trim()) {
+    errEl.style.display = 'block'; return;
+  }
+  errEl.style.display = 'none';
+
+  const btn = document.getElementById('pay-btn');
+  btn.disabled = true; btn.textContent = 'Processing…';
+
+  setTimeout(() => {
+    const ref = 'SMK-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    const booking = {
+      ref, ...bookingData,
+      status: 'paid',
+      createdAt: new Date().toISOString(),
+      fname: document.getElementById('fname').value,
+      lname: document.getElementById('lname').value,
+    };
+    const bookings = getBookings();
+    bookings.unshift(booking);
+    saveBookings(bookings);
+
+    // show success
+    [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
+    document.getElementById('step-indicator').style.display = 'none';
+    document.getElementById('card-success').classList.add('active');
+    document.getElementById('booking-ref-display').textContent = ref;
+    btn.disabled = false;
+  }, 1800);
+}
+
+function resetBooking() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea, select').forEach(el => el.value = '');
+  document.getElementById('freq-section').style.display = 'none';
+  document.getElementById('size-section').style.display = 'none';
+  document.getElementById('price-preview').style.display = 'none';
+  document.getElementById('step-indicator').style.display = 'flex';
+  document.getElementById('card-success').classList.remove('active');
+  document.getElementById('pay-btn').textContent = 'Pay & Confirm Booking';
+  goStep(1);
+}
+
+/* ════════════════════════════════════
+   ADMIN AUTH
+════════════════════════════════════ */
+function doLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  const errEl = document.getElementById('login-error');
+  if (pw === ADMIN_PW) {
+    sessionStorage.setItem('smk_auth','1');
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = '';
+    renderStats(); renderBookings();
+    errEl.style.display = 'none';
+  } else {
+    errEl.style.display = 'block';
+    document.getElementById('admin-pw').value = '';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('smk_auth');
+  document.getElementById('admin-dashboard').style.display = 'none';
+  document.getElementById('admin-login').style.display = '';
+  document.getElementById('admin-pw').value = '';
+}
+
+/* ════════════════════════════════════
+   ADMIN DASHBOARD
+════════════════════════════════════ */
+function setFilter(f) {
+  adminFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderBookings();
+}
+
+function renderStats() {
+  const all = getBookings();
+  const pending = all.filter(b => b.status === 'pending').length;
+  const confirmed = all.filter(b => b.status === 'confirmed').length;
+  const paid = all.filter(b => b.status === 'paid').length;
+  const revenue = all.filter(b => b.status === 'paid').reduce((s,b) => s + (b.total||0), 0);
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${all.length}</div><div class="stat-label">Total bookings</div></div>
+    <div class="stat-card"><div class="stat-num">${pending}</div><div class="stat-label">Pending</div></div>
+    <div class="stat-card"><div class="stat-num">${confirmed}</div><div class="stat-label">Confirmed</div></div>
+    <div class="stat-card"><div class="stat-num">£${revenue}</div><div class="stat-label">Revenue (paid)</div></div>
+  `;
+}
+
+function renderBookings() {
+  let data = getBookings();
+  const sort = document.getElementById('admin-sort')?.value || 'newest';
+
+  if (sort === 'oldest') data = [...data].reverse();
+  else if (sort === 'date') data = [...data].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  if (adminFilter !== 'all') data = data.filter(b => b.status === adminFilter);
+
+  const tbody = document.getElementById('bookings-body');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><div>No bookings found</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(b => {
+    const dateStr = b.date ? new Date(b.date).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '—';
+    const badge = {
+      pending: '<span class="badge badge-pending">Pending</span>',
+      confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
+      paid: '<span class="badge badge-paid">Paid</span>',
+      cancelled: '<span class="badge badge-cancelled">Cancelled</span>',
+    }[b.status] || '';
+
+    let actions = '';
+    if (b.status === 'pending') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','confirmed')">Confirm</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
+    else if (b.status === 'confirmed') actions = `<button class="action-btn paid" onclick="updateStatus('${b.ref}','paid')">Mark paid</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
+    else if (b.status === 'paid') actions = `<button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Refund</button>`;
+    else actions = '<span style="color:var(--muted);font-size:12px;">—</span>';
+
+    return `<tr>
+      <td style="font-weight:700; font-size:12px; color:var(--green-dark);">${b.ref}</td>
+      <td><div style="font-weight:700;">${b.name}</div><div style="font-size:12px;color:var(--muted);">${b.email}</div></td>
+      <td><div>${b.service}</div><div style="font-size:12px;color:var(--muted);">${b.frequency||''}</div></td>
+      <td>${dateStr}<br><span style="font-size:12px;color:var(--muted);">${b.time||''}</span></td>
+      <td style="font-weight:700;">£${b.total||'—'}</td>
+      <td>${badge}</td>
+      <td><div class="action-btns">${actions}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStatus(ref, status) {
+  const bookings = getBookings();
+  const idx = bookings.findIndex(b => b.ref === ref);
+  if (idx > -1) { bookings[idx].status = status; saveBookings(bookings); }
+  renderStats(); renderBookings();
+}
+
+/* ── Seed demo data if empty ── */
+(function seedDemo() {
+  if (getBookings().length > 0) return;
+  const demo = [
+    { ref:'SMK-DEMO01', service:'Domestic Cleaning', frequency:'Weekly', size:'2 bed', name:'Sarah Johnson', fname:'Sarah', lname:'Johnson', email:'sarah@example.com', phone:'07700900001', address:'14 Campbell Park, MK9 3AA', date:'2025-06-10', time:'9:00 AM', notes:'Please be quiet — baby napping.', total:63, status:'confirmed', createdAt:'2025-06-01T09:12:00Z' },
+    { ref:'SMK-DEMO02', service:'Deep Cleaning', frequency:'One-off', size:'3 bed', name:'Tom Wheeler', fname:'Tom', lname:'Wheeler', email:'tom@example.com', phone:'07700900002', address:'7 Bletchley Road, MK3 5BT', date:'2025-06-14', time:'8:00 AM', notes:'', total:185, status:'paid', createdAt:'2025-06-02T14:30:00Z' },
+    { ref:'SMK-DEMO03', service:'Office Cleaning', frequency:'Fortnightly', size:'—', name:'Apex Ltd', fname:'Apex', lname:'Ltd', email:'office@apex.co.uk', phone:'07700900003', address:'Unit 4, Sunrise Pk, MK14 6LS', date:'2025-06-16', time:'7:00 AM', notes:'Key left at reception.', total:72, status:'pending', createdAt:'2025-06-03T10:05:00Z' },
+    { ref:'SMK-DEMO04', service:'Domestic Cleaning', frequency:'One-off', size:'Studio / 1 bed', name:'Priya Patel', fname:'Priya', lname:'Patel', email:'priya@example.com', phone:'07700900004', address:'3 Caldecotte Lake Dr, MK7 8HP', date:'2025-06-18', time:'11:00 AM', notes:'', total:60, status:'cancelled', createdAt:'2025-06-03T16:22:00Z' },
+  ];
+  saveBookings(demo);
+})();
+</script>
+</body>
+</html>
