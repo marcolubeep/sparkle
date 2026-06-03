@@ -1,157 +1,100 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Sparkle MK — Cleaning Services Milton Keynes</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
-
 <style>
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-
     --green: #3a9e7e;
-
     --green-light: #e8f7f2;
-
     --green-dark: #1f6b53;
-
     --sky: #d4eef8;
-
     --text: #1a2e25;
-
     --muted: #6b8f7e;
-
     --white: #ffffff;
-
     --bg: #f5fbf8;
-
   }
-
   html { scroll-behavior: smooth; }
-
   body { font-family: 'Nunito', sans-serif; font-weight: 400; color: var(--text); background: var(--bg); overflow-x: hidden; }
 
-
-
   /* NAV */
-
-
- 
- nav {
-
-
+  nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-
-
     display: flex; align-items: center; justify-content: space-between;
-
-
     padding: 1rem 2rem;
-
-
     background: rgba(255,255,255,0.85);
-
-
     backdrop-filter: blur(12px);
-
-
     border-bottom: 1px solid rgba(58,158,126,0.1);
-
-
   }
-
-
   .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-
-
   .nav-logo img { width: 42px; height: 42px; object-fit: contain; }
-
-
   .nav-logo span { font-weight: 800; font-size: 1.2rem; color: var(--text); }
-
-
   .nav-logo span em { font-style: normal; color: var(--green); }
-
-
   .nav-cta {
-
-
     background: var(--green); color: white; text-decoration: none;
-
-
     padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
-
-
     transition: background 0.2s, transform 0.2s;
-
-
   }
-
-
   .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
-
-
- 
+  <nav style="display: flex; flex-direction: column; align-items: center; padding: 0;">
+    <a href="#" style="display: block; width: 100%;">
+        <img src="preview.webp" alt="Sparkle MK - Wide Banner Header" style="width: 100%; height: auto; display: block; object-fit: cover;">
+    </a>
+    <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 2rem; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-top: 1px solid rgba(58,158,126,0.1);">
+        <a class="nav-cta" href="booking.html" style="background:var(--green); color:white; text-decoration:none; padding:12px 28px; border-radius:50px; font-weight:700; font-size:1rem; transition: background 0.2s, transform 0.2s;">Get a Quote</a>
+        <a href="booking.html#admin" style="background:var(--text); color:white; text-decoration:none; padding:10px 20px; border-radius:50px; font-weight:700; font-size:0.85rem;">Admin ↗</a>
+    </div>
+</nav>
 
   /* HERO */
-
   .hero {
-
     min-height: 100vh;
-
     background: linear-gradient(135deg, #d4eef8 0%, #e8f7f2 50%, #c8edd8 100%);
-
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-
     text-align: center; padding: 6rem 1.5rem 4rem; position: relative; overflow: hidden;
-
   }
-
   .hero::before {
-
     content: ''; position: absolute; inset: 0; pointer-events: none;
-
     background: radial-gradient(ellipse at 70% 20%, rgba(58,158,126,0.12) 0%, transparent 60%),
-
                 radial-gradient(ellipse at 20% 80%, rgba(212,238,248,0.6) 0%, transparent 50%);
-
   }
-
   .hero-logo {
-
     position: relative; z-index: 1; margin-bottom: 1.5rem;
-
     animation: fadeDown 0.8s ease both;
-
   }
-
   .hero-logo img {
-
     width: 130px; height: 130px; object-fit: contain;
-
     filter: drop-shadow(0 6px 24px rgba(58,158,126,0.3));
-
   }
-
   @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
-
   @keyframes fadeUp   { from { opacity:0; transform:translateY(20px);  } to { opacity:1; transform:translateY(0); } }
 
-
-
   .hero-badge {
+    position: relative; z-index: 1;
+    display: inline-block;
+    background: rgba(58,158,126,0.12); color: var(--green-dark);
+    font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 6px 18px; border-radius: 50px; margin-bottom: 1rem;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+  .hero h1 {
+    position: relative; z-index: 1;
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: clamp(2.2rem, 7vw, 3.8rem); line-height: 1.15;
+    color: var(--text); margin-bottom: 1.2rem;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+  .hero h1 span { color: var(--green); }
+  .hero-sub {
+    position: relative; z-index: 1;
+    font-size: clamp(1rem, 2.5vw, 1.15rem); color: var(--muted);
+    max-width: 460px; line-height: 1.7; margin-bottom: 2.5rem;
+    animation: fadeUp 0.8s ease 0.3s both;
+0 commit comments
+Comments
+0 (0)
 
-
-0 commit commentsComments0 (0)
-
-
-You're not receiving notifications 
+You're not receiving notifications from this thread.
