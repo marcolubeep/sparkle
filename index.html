@@ -21,17 +21,25 @@
   body { font-family: 'Nunito', sans-serif; font-weight: 400; color: var(--text); background: var(--bg); overflow-x: hidden; }
 
   /* NAV */
-  <nav style="display: flex; flex-direction: column; align-items: center; padding: 0;">
-    <a href="#" style="display: block; width: 100%;">
-        <img src="preview.webp" alt="Sparkle MK - Wide Banner Header" style="width: 100%; height: auto; display: block; object-fit: cover;">
-    </a>
-
-    <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem 2rem; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-top: 1px solid rgba(58,158,126,0.1);">
-        <a class="nav-cta" href="booking.html" style="background:var(--green); color:white; text-decoration:none; padding:12px 28px; border-radius:50px; font-weight:700; font-size:1rem; transition: background 0.2s, transform 0.2s;">Get a Quote</a>
-        <a href="booking.html#admin" style="background:var(--text); color:white; text-decoration:none; padding:10px 20px; border-radius:50px; font-weight:700; font-size:0.85rem;">Admin ↗</a>
-    </div>
-</nav>
-
+ nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(58,158,126,0.1);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo img { width: 42px; height: 42px; object-fit: contain; }
+  .nav-logo span { font-weight: 800; font-size: 1.2rem; color: var(--text); }
+  .nav-logo span em { font-style: normal; color: var(--green); }
+  .nav-cta {
+    background: var(--green); color: white; text-decoration: none;
+    padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
+ 
   /* HERO */
   .hero {
     min-height: 100vh;
