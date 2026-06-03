@@ -1,179 +1,157 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Sparkle MK — Cleaning Services Milton Keynes</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+
 <style>
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
+
     --green: #3a9e7e;
+
     --green-light: #e8f7f2;
+
     --green-dark: #1f6b53;
+
     --sky: #d4eef8;
+
     --text: #1a2e25;
+
     --muted: #6b8f7e;
+
     --white: #ffffff;
+
     --bg: #f5fbf8;
+
   }
+
   html { scroll-behavior: smooth; }
+
   body { font-family: 'Nunito', sans-serif; font-weight: 400; color: var(--text); background: var(--bg); overflow-x: hidden; }
 
+
+
   /* NAV */
-  nav {
+
+
+ 
+ nav {
+
+
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+
+
     display: flex; align-items: center; justify-content: space-between;
+
+
     padding: 1rem 2rem;
+
+
     background: rgba(255,255,255,0.85);
+
+
     backdrop-filter: blur(12px);
+
+
     border-bottom: 1px solid rgba(58,158,126,0.1);
+
+
   }
+
+
   .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+
+
   .nav-logo img { width: 42px; height: 42px; object-fit: contain; }
+
+
   .nav-logo span { font-weight: 800; font-size: 1.2rem; color: var(--text); }
+
+
   .nav-logo span em { font-style: normal; color: var(--green); }
+
+
   .nav-cta {
+
+
     background: var(--green); color: white; text-decoration: none;
+
+
     padding: 10px 24px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
+
+
     transition: background 0.2s, transform 0.2s;
+
+
   }
+
+
   .nav-cta:hover { background: var(--green-dark); transform: translateY(-1px); }
-  
+
+
+ 
+
   /* HERO */
+
   .hero {
+
     min-height: 100vh;
+
     background: linear-gradient(135deg, #d4eef8 0%, #e8f7f2 50%, #c8edd8 100%);
+
     display: flex; flex-direction: column; align-items: center; justify-content: center;
+
     text-align: center; padding: 6rem 1.5rem 4rem; position: relative; overflow: hidden;
+
   }
+
   .hero::before {
+
     content: ''; position: absolute; inset: 0; pointer-events: none;
+
     background: radial-gradient(ellipse at 70% 20%, rgba(58,158,126,0.12) 0%, transparent 60%),
+
                 radial-gradient(ellipse at 20% 80%, rgba(212,238,248,0.6) 0%, transparent 50%);
+
   }
+
   .hero-logo {
+
     position: relative; z-index: 1; margin-bottom: 1.5rem;
+
     animation: fadeDown 0.8s ease both;
+
   }
+
   .hero-logo img {
-    width: 280px; height: auto; max-width: 90%; object-fit: contain;
-    border-radius: 16px;
-    filter: drop-shadow(0 6px 24px rgba(58,158,126,0.2));
+
+    width: 130px; height: 130px; object-fit: contain;
+
+    filter: drop-shadow(0 6px 24px rgba(58,158,126,0.3));
+
   }
+
   @keyframes fadeDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
   @keyframes fadeUp   { from { opacity:0; transform:translateY(20px);  } to { opacity:1; transform:translateY(0); } }
 
+
+
   .hero-badge {
-    position: relative; z-index: 1;
-    display: inline-block;
-    background: rgba(58,158,126,0.12); color: var(--green-dark);
-    font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 6px 18px; border-radius: 50px; margin-bottom: 1rem;
-    animation: fadeUp 0.8s ease 0.1s both;
-  }
-  .hero h1 {
-    position: relative; z-index: 1;
-    font-family: 'Playfair Display', serif; font-weight: 700;
-    font-size: clamp(2.2rem, 7vw, 3.8rem); line-height: 1.15;
-    color: var(--text); margin-bottom: 1.2rem;
-    animation: fadeUp 0.8s ease 0.2s both;
-  }
-  .hero h1 span { color: var(--green); }
-  .hero-sub {
-    position: relative; z-index: 1;
-    font-size: clamp(1rem, 2.5vw, 1.15rem); color: var(--muted);
-    max-width: 460px; line-height: 1.7; margin-bottom: 2.5rem;
-    animation: fadeUp 0.8s ease 0.3s both;
-  }
-  .hero-cta {
-    position: relative; z-index: 1;
-    display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-    animation: fadeUp 0.8s ease 0.4s both;
-  }
-  .btn-primary {
-    background: var(--green); color: white; text-decoration: none;
-    padding: 14px 32px; border-radius: 50px; font-weight: 700; font-size: 1rem;
-    transition: background 0.25s, transform 0.2s;
-    box-shadow: 0 4px 20px rgba(58,158,126,0.35);
-  }
-  .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); }
-  .btn-secondary {
-    background: white; color: var(--green); text-decoration: none;
-    padding: 14px 32px; border-radius: 50px; font-weight: 700; font-size: 1rem;
-    border: 2px solid var(--green); transition: all 0.25s;
-  }
-  .btn-secondary:hover { background: var(--green-light); transform: translateY(-2px); }
 
-  /* WAVE */
-  .wave { display: block; width: 100%; overflow: hidden; line-height: 0; margin-top: -2px; }
 
-  /* SECTIONS */
-  .section { padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--green); font-weight: 700; margin-bottom: 0.6rem; text-align: center;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 2.6rem);
-    text-align: center; margin-bottom: 0.8rem; color: var(--text);
-  }
-  .section-sub {
-    text-align: center; color: var(--muted); font-size: 1.05rem;
-    max-width: 500px; margin: 0 auto 3.5rem; line-height: 1.7;
-  }
+0 commit commentsComments0 (0)
 
-  /* SERVICES */
-  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-  .service-card {
-    background: white; border-radius: 20px; padding: 2rem 1.8rem;
-    box-shadow: 0 2px 20px rgba(58,158,126,0.08);
-    border: 1px solid rgba(58,158,126,0.1);
-    transition: transform 0.25s, box-shadow 0.25s;
-  }
-  .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(58,158,126,0.15); }
-  .service-icon { font-size: 2.4rem; margin-bottom: 1rem; }
-  .service-card h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 0.6rem; }
-  .service-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.65; }
 
-  /* WHY US */
-  .why-bg { background: linear-gradient(135deg, var(--green-light), var(--sky)); padding: 5rem 1.5rem; }
-  .why-inner { max-width: 1100px; margin: 0 auto; }
-  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; max-width: 860px; margin: 0 auto; }
-  .why-item { text-align: center; padding: 1.5rem 1rem; }
-  .why-num { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--green); font-weight: 700; line-height: 1; margin-bottom: 0.4rem; }
-  .why-label { font-weight: 700; color: var(--text); font-size: 1rem; }
-  .why-desc { color: var(--muted); font-size: 0.88rem; margin-top: 0.3rem; line-height: 1.5; }
-
-  /* CONTACT */
-  .contact-box {
-    background: white; border-radius: 24px; padding: 3rem 2.5rem;
-    box-shadow: 0 4px 40px rgba(58,158,126,0.12);
-    border: 1px solid rgba(58,158,126,0.15);
-    max-width: 580px; margin: 2.5rem auto 0; text-align: center;
-  }
-  .coming-soon-badge {
-    display: inline-block; background: var(--green-light); color: var(--green-dark);
-    font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 6px 16px; border-radius: 50px; margin-bottom: 1.5rem;
-  }
-  .contact-box p { color: var(--muted); font-size: 1rem; line-height: 1.7; margin-bottom: 0.5rem; }
-  .contact-area { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; margin-top: 1.5rem; }
-  .contact-item { display: flex; align-items: center; gap: 10px; font-size: 1rem; color: var(--muted); }
-  .contact-item .icon {
-    width: 36px; height: 36px; border-radius: 50%; background: var(--green-light);
-    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
-  }
-
-  /* FOOTER */
-  footer {
-    background: var(--text); color: rgba(255,255,255,0.5);
-    text-align: center; padding: 2.5rem 1.5rem; font-size: 0.88rem;
-  }
-  footer strong { color: rgba(255,255,255,0.85); }
-</style>
-</head>
-<body>
-
-<nav>
-  <a class="nav-logo" href="#">
+You're not receiving notifications 
