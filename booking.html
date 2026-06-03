@@ -362,31 +362,31 @@ nav {
 
       <div class="service-grid">
         <div class="service-option">
-          <input type="radio" name="service" id="svc-domestic" value="Domestic Cleaning" data-price="60" data-unit="/visit">
+          <input type="radio" name="service" id="svc-domestic" value="Domestic Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
           <label for="svc-domestic">
             <span class="svc-icon">🏠</span>
             <span class="svc-name">Domestic Cleaning</span>
-            <span class="svc-price">From £60/visit</span>
+            <span class="svc-price">From £36/visit</span>
             <span class="svc-desc">Regular home clean</span>
             <span class="service-check"></span>
           </label>
         </div>
         <div class="service-option">
-          <input type="radio" name="service" id="svc-office" value="Office Cleaning" data-price="80" data-unit="/visit">
+          <input type="radio" name="service" id="svc-office" value="Office Cleaning" data-stripe="https://buy.stripe.com/9B6eVc3Uo19W7XV6ei6sw02" data-type="business">
           <label for="svc-office">
             <span class="svc-icon">🏢</span>
             <span class="svc-name">Office Cleaning</span>
-            <span class="svc-price">From £80/visit</span>
+            <span class="svc-price">From £36/visit</span>
             <span class="svc-desc">Workspace clean</span>
             <span class="service-check"></span>
           </label>
         </div>
         <div class="service-option">
-          <input type="radio" name="service" id="svc-deep" value="Deep Cleaning" data-price="150" data-unit=" flat">
+          <input type="radio" name="service" id="svc-deep" value="Deep Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
           <label for="svc-deep">
             <span class="svc-icon">✨</span>
             <span class="svc-name">Deep Cleaning</span>
-            <span class="svc-price">From £150</span>
+            <span class="svc-price">From £72</span>
             <span class="svc-desc">Top-to-bottom refresh</span>
             <span class="service-check"></span>
           </label>
@@ -418,10 +418,10 @@ nav {
           <label>Property size</label>
           <select id="property-size">
             <option value="" disabled selected>Select size…</option>
-            <option value="Studio / 1 bed" data-add="0">Studio / 1 bed (+£0)</option>
-            <option value="2 bed" data-add="20">2 bed (+£20)</option>
-            <option value="3 bed" data-add="35">3 bed (+£35)</option>
-            <option value="4+ bed" data-add="55">4+ bed (+£55)</option>
+            <option value="Studio / 1 bed" data-hours-dom="2" data-hours-office="2" data-hours-deep="4">Studio / 1 bed</option>
+            <option value="2 bed" data-hours-dom="2.5" data-hours-office="2" data-hours-deep="5">2 bed</option>
+            <option value="3 bed" data-hours-dom="3" data-hours-office="3" data-hours-deep="6">3 bed</option>
+            <option value="4+ bed" data-hours-dom="4" data-hours-office="4" data-hours-deep="8">4+ bed</option>
           </select>
         </div>
       </div>
@@ -509,7 +509,7 @@ nav {
       <button class="btn-primary" onclick="goStep(3)" style="margin-top:0.5rem;">Continue →</button>
     </div>
 
-    <!-- ── STEP 3: PAYMENT ── -->
+    <!-- ── STEP 3: REVIEW & PAY ── -->
     <div class="form-card" id="card-3">
       <button class="btn-back" onclick="goStep(2)">← Back</button>
       <h2>Review & pay</h2>
@@ -518,31 +518,25 @@ nav {
 
       <div class="payment-area">
         <div class="payment-title">
-          Payment details
+          Have a discount code?
           <span class="stripe-badge">🔒 Powered by Stripe</span>
         </div>
-        <div class="card-field-mock">
-          <input type="text" id="card-num" placeholder="Card number" maxlength="19" oninput="formatCard(this)">
-          <span style="font-size:16px; color:var(--muted);">💳</span>
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1rem;">
+          Enter your discount code on the Stripe payment page. Weekly bookings use <strong>WEEKLY15</strong>, fortnightly use <strong>FORTNIGHTLY10</strong>.
+        </p>
+        <div style="background:var(--green-light); border-radius:10px; padding:1rem 1.25rem; font-size:0.88rem; color:var(--green-dark); line-height:1.6;">
+          <strong>How it works:</strong><br>
+          1. Click "Continue to payment" below<br>
+          2. You'll be taken to Stripe's secure payment page<br>
+          3. Enter your card details and any discount code<br>
+          4. Your booking is confirmed once payment is complete
         </div>
-        <div class="card-row">
-          <div class="card-field-mock">
-            <input type="text" id="card-exp" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
-          </div>
-          <div class="card-field-mock">
-            <input type="text" id="card-cvc" placeholder="CVC" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
-          </div>
-        </div>
-        <div class="card-field-mock">
-          <input type="text" id="card-name" placeholder="Name on card">
-        </div>
-        <div class="secure-note">🔐 <strong>256-bit SSL encrypted.</strong> Your card details are never stored on our servers.</div>
       </div>
 
-      <div id="pay-error" class="login-error" style="text-align:left;">Please complete all card details.</div>
-      <button class="btn-primary" id="pay-btn" onclick="submitBooking()">Pay & Confirm Booking</button>
+      <div id="pay-error" class="login-error" style="text-align:left; display:none;">Something went wrong saving your booking. Please try again.</div>
+      <button class="btn-primary" id="pay-btn" onclick="submitBooking()">Continue to payment →</button>
       <div style="text-align:center; margin-top:0.75rem; font-size:0.8rem; color:var(--muted);">
-        By booking you agree to our cancellation policy. 24h notice required for a full refund.
+        🔐 Secure payment via Stripe. 24h notice required for a full refund.
       </div>
     </div>
 
@@ -720,17 +714,26 @@ function onServiceChange() {
   updatePrice();
 }
 
-function updatePrice() {
+const HOURLY_RATE = 18;
+
+function getHours() {
   const svc = document.querySelector('input[name="service"]:checked');
   const sizeEl = document.getElementById('property-size');
-  const freqEl = document.querySelector('input[name="frequency"]:checked');
-  if (!svc) return;
-  let base = parseFloat(svc.dataset.price || 0);
   const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
-  const sizeAdd = parseFloat(sizeOpt?.dataset.add || 0);
-  const discount = freqEl ? parseFloat(freqEl.dataset.discount || 0) : 0;
-  let total = (base + sizeAdd) * (1 - discount/100);
-  document.getElementById('price-preview-value').textContent = '£' + Math.round(total);
+  if (!svc || !sizeOpt || !sizeOpt.value) return null;
+  const type = svc.value;
+  let hours;
+  if (type === 'Office Cleaning') hours = parseFloat(sizeOpt.dataset.hoursOffice || 2);
+  else if (type === 'Deep Cleaning') hours = parseFloat(sizeOpt.dataset.hoursDeep || 4);
+  else hours = parseFloat(sizeOpt.dataset.hoursDom || 2);
+  return hours;
+}
+
+function updatePrice() {
+  const hours = getHours();
+  if (hours === null) return;
+  const total = Math.round(hours * HOURLY_RATE * 100) / 100;
+  document.getElementById('price-preview-value').textContent = '£' + total.toFixed(2) + ' (' + hours + 'h × £' + HOURLY_RATE + ')';
 }
 
 function validateStep1() {
@@ -776,20 +779,18 @@ function buildSummary() {
   const svc = document.querySelector('input[name="service"]:checked');
   const freq = document.querySelector('input[name="frequency"]:checked');
   const sizeEl = document.getElementById('property-size');
-  const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
   const time = document.querySelector('input[name="time"]:checked');
-
-  let base = parseFloat(svc.dataset.price);
-  const sizeAdd = parseFloat(sizeOpt?.dataset.add || 0);
-  const discount = freq ? parseFloat(freq.dataset.discount || 0) : 0;
-  const subtotal = base + sizeAdd;
-  const discountAmt = Math.round(subtotal * discount / 100);
-  const total = subtotal - discountAmt;
+  const hours = getHours();
+  const total = hours ? Math.round(hours * HOURLY_RATE * 100) / 100 : 0;
+  const freqVal = freq ? freq.value : 'One-off';
+  const discountPct = freq ? parseFloat(freq.dataset.discount || 0) : 0;
 
   bookingData = {
     service: svc.value,
-    frequency: freq ? freq.value : 'One-off',
+    frequency: freqVal,
     size: sizeEl.value || '—',
+    hours: hours,
+    stripeUrl: svc.dataset.stripe,
     name: document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
     email: document.getElementById('email').value,
     phone: document.getElementById('phone').value,
@@ -798,50 +799,36 @@ function buildSummary() {
     time: time?.value,
     notes: document.getElementById('notes').value,
     total: total,
-    subtotal: subtotal,
-    discount: discountAmt,
-    discountPct: discount,
+    subtotal: total,
+    discount: 0,
+    discountPct: discountPct,
   };
 
   const dateStr = new Date(bookingData.date).toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  const discountNote = discountPct > 0
+    ? `<div class="summary-row"><span class="summary-label">Discount code</span><span class="summary-value" style="color:var(--green-dark)">${freqVal === 'Weekly' ? 'WEEKLY15' : 'FORTNIGHTLY10'} (${discountPct}% off — enter on Stripe)</span></div>`
+    : '';
 
   document.getElementById('booking-summary').innerHTML = `
     <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value">${bookingData.service}</span></div>
     <div class="summary-row"><span class="summary-label">Frequency</span><span class="summary-value">${bookingData.frequency}</span></div>
     <div class="summary-row"><span class="summary-label">Property size</span><span class="summary-value">${bookingData.size}</span></div>
+    <div class="summary-row"><span class="summary-label">Duration</span><span class="summary-value">${hours}h × £${HOURLY_RATE}/h</span></div>
     <div class="summary-row"><span class="summary-label">Date</span><span class="summary-value">${dateStr}</span></div>
     <div class="summary-row"><span class="summary-label">Time</span><span class="summary-value">${bookingData.time}</span></div>
     <div class="summary-row"><span class="summary-label">Address</span><span class="summary-value">${bookingData.address}</span></div>
-    ${discountAmt > 0 ? `<div class="summary-row"><span class="summary-label">Discount (${discount}%)</span><span class="summary-value" style="color:var(--green-dark)">−£${discountAmt}</span></div>` : ''}
-    <div class="summary-row total"><span>Total</span><span>£${total}</span></div>
+    ${discountNote}
+    <div class="summary-row total"><span>Total before discount</span><span>£${total.toFixed(2)}</span></div>
   `;
-  document.getElementById('pay-btn').textContent = `Pay £${total} & Confirm Booking`;
-}
-
-/* ── Payment formatting ── */
-function formatCard(el) {
-  el.value = el.value.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();
-}
-function formatExpiry(el) {
-  let v = el.value.replace(/\D/g,'');
-  if (v.length >= 2) v = v.slice(0,2) + ' / ' + v.slice(2,4);
-  el.value = v;
+  document.getElementById('pay-btn').textContent = `Continue to payment — £${total.toFixed(2)} →`;
 }
 
 async function submitBooking() {
-  const num = document.getElementById('card-num').value.replace(/\s/g,'');
-  const exp = document.getElementById('card-exp').value;
-  const cvc = document.getElementById('card-cvc').value;
-  const name = document.getElementById('card-name').value;
   const errEl = document.getElementById('pay-error');
-
-  if (num.length < 15 || exp.length < 7 || cvc.length < 3 || !name.trim()) {
-    errEl.style.display = 'block'; return;
-  }
   errEl.style.display = 'none';
-
   const btn = document.getElementById('pay-btn');
-  btn.disabled = true; btn.textContent = 'Processing…';
+  btn.disabled = true;
+  btn.textContent = 'Saving booking…';
 
   try {
     const ref = 'SMK-' + Math.random().toString(36).substr(2,6).toUpperCase();
@@ -863,20 +850,34 @@ async function submitBooking() {
       subtotal: bookingData.subtotal,
       discount: bookingData.discount,
       discount_pct: bookingData.discountPct,
-      status: 'paid',
+      status: 'pending',
     };
+
+    // Save to Supabase first
     await sbFetch('POST', booking);
-    [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
-    document.getElementById('step-indicator').style.display = 'none';
-    document.getElementById('card-success').classList.add('active');
-    document.getElementById('booking-ref-display').textContent = ref;
+
+    // Build Stripe URL with quantity (hours) and prefill email
+    const hours = bookingData.hours;
+    const qty = Math.round(hours * 2); // Stripe quantity = half-hours if needed, here we use whole hours
+    // Stripe Payment Links support ?quantity=N and ?prefilled_email=
+    const stripeBase = bookingData.stripeUrl;
+    const stripeUrl = stripeBase
+      + '?quantity=' + hours
+      + '&prefilled_email=' + encodeURIComponent(bookingData.email)
+      + '&client_reference_id=' + ref;
+
+    btn.textContent = 'Redirecting to Stripe…';
+
+    // Small delay so user sees the message, then redirect
+    setTimeout(() => { window.location.href = stripeUrl; }, 800);
+
   } catch(e) {
-    errEl.textContent = 'Payment failed — please try again or contact us.';
+    errEl.textContent = 'Could not save your booking. Please try again or contact us.';
     errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Continue to payment →';
     console.error(e);
   }
-  btn.disabled = false;
-  btn.textContent = 'Pay & Confirm Booking';
 }
 
 function resetBooking() {
@@ -982,19 +983,4 @@ async function renderBookings() {
       </tr>`;
     }).join('');
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load bookings. Check your Supabase connection.</div></div></td></tr>`;
-    console.error('Render error:', e);
-  }
-}
-
-async function updateStatus(ref, status) {
-  try {
-    await sbFetch('PATCH', { status }, `ref=eq.${ref}`);
-    renderStats(); renderBookings();
-  } catch(e) {
-    alert('Could not update status. Please try again.'); console.error(e);
-  }
-}
-</script>
-</body>
-</html>
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state
