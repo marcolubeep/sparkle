@@ -454,13 +454,22 @@ nav {
         <div id="size-section" style="display:none; margin-bottom:1.5rem;">
           <div class="form-group">
             <label>Property size</label>
-            <select id="property-size">
-              <option value="" disabled selected>Select size…</option>
-              <option value="Studio / 1 bed" data-hours-dom="2" data-hours-office="2" data-hours-deep="4">Studio / 1 bed</option>
-              <option value="2 bed" data-hours-dom="2.5" data-hours-office="2" data-hours-deep="5">2 bed</option>
-              <option value="3 bed" data-hours-dom="3" data-hours-office="3" data-hours-deep="6">3 bed</option>
-              <option value="4+ bed" data-hours-dom="4" data-hours-office="4" data-hours-deep="8">4+ bed</option>
-            </select>
+            <!-- Shown for Domestic & Deep Clean -->
+<select id="property-size" style="display:none;">
+  <option value="" disabled selected>Select property size…</option>
+  <option value="Studio / 1 bed" data-hours-dom="2" data-hours-deep="4">Studio / 1 bed</option>
+  <option value="2 bed" data-hours-dom="2.5" data-hours-deep="5">2 bed</option>
+  <option value="3 bed" data-hours-dom="3" data-hours-deep="6">3 bed</option>
+  <option value="4+ bed" data-hours-dom="4" data-hours-deep="8">4+ bed</option>
+</select>
+
+<!-- Shown for Office Cleaning -->
+<select id="office-size" style="display:none;">
+  <option value="" disabled selected>Select office size…</option>
+  <option value="Small office" data-hours-office="2">Small (up to 5 desks) — 2h</option>
+  <option value="Medium office" data-hours-office="3">Medium (up to 15 desks) — 3h</option>
+  <option value="Large office" data-hours-office="4">Large (15+ desks) — 4h</option>
+</select>
           </div>
         </div>
 
