@@ -230,3 +230,206 @@
   footer strong { color: rgba(255,255,255,0.85); }
   .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 0.75rem; }
   .footer-links a { color: rgba(255,255,255,0.4); text-decoratio
+ .footer-links a:hover { color: var(--green); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav { padding: 0.85rem 1.2rem; }
+    .nav-admin { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <img src="sparkleBanner.jpg" alt="Sparkle MK logo" style="width:42px;height:42px;object-fit:contain;border-radius:8px;">
+    <span>Sparkle <em>MK</em></span>
+  </a>
+  <div class="nav-buttons">
+    <a class="nav-cta" href="booking.html">Book now</a>
+    <a class="nav-admin" href="booking.html#admin">Admin ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-logo">
+    <img src="sparkleBanner.jpg" alt="Sparkle MK">
+  </div>
+  <p class="hero-badge">Milton Keynes &amp; surroundings</p>
+  <h1>A cleaner home,<br><span>a happier life.</span></h1>
+  <p class="hero-sub">Professional domestic and office cleaning with a warm, friendly touch. We treat your space like our own.</p>
+  <div class="hero-cta">
+    <a class="btn-primary" href="booking.html">Book online now</a>
+    <a class="btn-secondary" href="#services">Our services</a>
+  </div>
+</section>
+
+<svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" preserveAspectRatio="none">
+  <path fill="#f5fbf8" d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z"/>
+</svg>
+
+<!-- SERVICES -->
+<div id="services">
+<div class="section">
+  <p class="section-label">What we offer</p>
+  <h2 class="section-title">Cleaning services</h2>
+  <p class="section-sub">Whether it's your home or your office, we leave every corner spotless.</p>
+  <div class="services-grid">
+    <a class="service-card" href="booking.html">
+      <div class="service-icon">🏠</div>
+      <h3>Domestic Cleaning</h3>
+      <p>Regular or one-off home cleans tailored to your schedule. Kitchens, bathrooms, bedrooms — we handle it all with care.</p>
+      <span class="service-price">From £36/visit</span>
+    </a>
+    <a class="service-card" href="booking.html">
+      <div class="service-icon">🏢</div>
+      <h3>Office Cleaning</h3>
+      <p>Keep your workspace fresh and professional. We work around your hours so you never have to stop.</p>
+      <span class="service-price">From £36/visit</span>
+    </a>
+    <a class="service-card" href="booking.html">
+      <div class="service-icon">✨</div>
+      <h3>Deep Cleaning</h3>
+      <p>A thorough top-to-bottom clean for move-ins, move-outs, or when your space needs a proper refresh.</p>
+      <span class="service-price">From £72</span>
+    </a>
+  </div>
+</div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-bg">
+<div class="section">
+  <p class="section-label">Transparent pricing</p>
+  <h2 class="section-title">Simple, honest rates</h2>
+  <p class="section-sub">All services charged at £18/hour. Pick a package or set your own hours.</p>
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="pricing-icon">🏠</div>
+      <div class="pricing-name">Domestic Cleaning</div>
+      <div class="pricing-from">from</div>
+      <div class="pricing-rate">£36</div>
+      <div class="pricing-per">per visit · 2 hours</div>
+      <p class="pricing-desc">Regular home cleaning tailored to your needs and schedule.</p>
+      <hr class="pricing-divider">
+      <ul class="pricing-items">
+        <li class="pricing-item">Studio / 1 bed — 2h (£36)</li>
+        <li class="pricing-item">2 bed — 2.5h (£45)</li>
+        <li class="pricing-item">3 bed — 3h (£54)</li>
+        <li class="pricing-item">4+ bed — 4h (£72)</li>
+        <li class="pricing-item">Weekly & fortnightly discounts</li>
+      </ul>
+      <a class="pricing-cta" href="booking.html">Book domestic clean</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-icon">✨</div>
+      <div class="pricing-name">Deep Cleaning</div>
+      <div class="pricing-from">from</div>
+      <div class="pricing-rate">£72</div>
+      <div class="pricing-per">per visit · 4 hours</div>
+      <p class="pricing-desc">A thorough top-to-bottom clean for move-ins, move-outs, or a proper refresh.</p>
+      <hr class="pricing-divider">
+      <ul class="pricing-items">
+        <li class="pricing-item">Studio / 1 bed — 4h (£72)</li>
+        <li class="pricing-item">2 bed — 5h (£90)</li>
+        <li class="pricing-item">3 bed — 6h (£108)</li>
+        <li class="pricing-item">4+ bed — 8h (£144)</li>
+        <li class="pricing-item">Inside oven, fridge & windows</li>
+      </ul>
+      <a class="pricing-cta" href="booking.html">Book deep clean</a>
+    </div>
+
+    <div class="pricing-card">
+      <div class="pricing-icon">🏢</div>
+      <div class="pricing-name">Office Cleaning</div>
+      <div class="pricing-from">from</div>
+      <div class="pricing-rate">£36</div>
+      <div class="pricing-per">per visit · 2 hours</div>
+      <p class="pricing-desc">Keep your workspace fresh and professional, around your schedule.</p>
+      <hr class="pricing-divider">
+      <ul class="pricing-items">
+        <li class="pricing-item">Small (up to 5 desks) — 2h (£36)</li>
+        <li class="pricing-item">Medium (up to 15 desks) — 3h (£54)</li>
+        <li class="pricing-item">Large (15+ desks) — 4h (£72)</li>
+        <li class="pricing-item">Custom hours available</li>
+        <li class="pricing-item">Weekly & fortnightly discounts</li>
+      </ul>
+      <a class="pricing-cta" href="booking.html">Book office clean</a>
+    </div>
+
+  </div>
+  <p class="pricing-note">
+    All prices based on <strong>£18/hour</strong> · Secure online payment via Stripe ·
+    <strong>WEEKLY15</strong> for 15% off weekly bookings · <strong>FORTNIGHTLY10</strong> for 10% off
+  </p>
+</div>
+</div>
+
+<!-- WHY US -->
+<div class="why-bg">
+  <div class="why-inner">
+    <p class="section-label" style="text-align:center">Why Sparkle MK</p>
+    <h2 class="section-title">We take pride in every clean</h2>
+    <p class="section-sub">A local team that genuinely cares about the quality of your space.</p>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-num">100%</div>
+        <div class="why-label">Satisfaction guarantee</div>
+        <div class="why-desc">Not happy? We come back. No questions asked.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">Local</div>
+        <div class="why-label">Milton Keynes based</div>
+        <div class="why-desc">Your neighbours, not a national franchise.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">Eco</div>
+        <div class="why-label">Eco-friendly products</div>
+        <div class="why-desc">Safe for kids, pets, and the planet.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-num">Flex</div>
+        <div class="why-label">Flexible scheduling</div>
+        <div class="why-desc">Weekly, fortnightly, or whenever you need us.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact">
+<div class="section" style="text-align:center">
+  <p class="section-label">Get in touch</p>
+  <h2 class="section-title">Ready for a sparkling clean?</h2>
+  <p class="section-sub">Book online in minutes and pay securely. No obligation, no hassle.</p>
+  <div class="contact-box">
+    <span class="online-badge">✅ Online booking available</span>
+    <p>Choose your service, pick a time, and pay securely via Stripe. Takes less than 2 minutes.</p>
+    <a class="btn-primary" href="booking.html" style="display:inline-block; margin-top:1.5rem; text-decoration:none; padding:14px 36px;">Book now →</a>
+    <div class="contact-area">
+      <div class="contact-item"><div class="icon">📍</div> Milton Keynes &amp; surrounding areas</div>
+      <div class="contact-item"><div class="icon">📞</div> Phone number coming soon</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Sparkle MK</strong> — Professional Cleaning, Milton Keynes<br>
+  <div class="footer-links">
+    <a href="booking.html">Book a clean</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+    <a href="booking.html#admin">Admin</a>
+  </div>
+  <span style="margin-top:0.75rem;display:block">© 2025 Sparkle MK. All rights reserved.</span>
+</footer>
+
+</body>
+</html>
