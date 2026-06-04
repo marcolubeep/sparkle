@@ -215,6 +215,38 @@ nav {
 .btn-back { background: none; border: none; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer; padding: 0; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 5px; }
 .btn-back:hover { color: var(--green); }
 
+/* MODE TOGGLE */
+.mode-toggle {
+  display: flex; background: var(--bg); border-radius: 12px; padding: 4px;
+  margin-bottom: 1.5rem; border: 1.5px solid var(--border);
+}
+.mode-btn {
+  flex: 1; padding: 9px 12px; border-radius: 9px; border: none;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.88rem;
+  cursor: pointer; background: transparent; color: var(--muted);
+  transition: all 0.2s; text-align: center;
+}
+.mode-btn.active { background: white; color: var(--green-dark); box-shadow: 0 1px 6px rgba(58,158,126,0.15); }
+
+/* HOURS STEPPER */
+.hours-stepper {
+  display: flex; align-items: center; gap: 0; border: 1.5px solid var(--border);
+  border-radius: 12px; overflow: hidden; width: fit-content; margin: 0.5rem 0 1rem;
+}
+.stepper-btn {
+  width: 44px; height: 44px; border: none; background: var(--green-light);
+  color: var(--green-dark); font-size: 1.3rem; font-weight: 700;
+  cursor: pointer; transition: background 0.2s; font-family: 'Nunito', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+}
+.stepper-btn:hover { background: var(--green); color: white; }
+.stepper-display {
+  min-width: 80px; text-align: center; font-weight: 800; font-size: 1.1rem;
+  color: var(--text); background: white; padding: 0 16px; height: 44px;
+  display: flex; align-items: center; justify-content: center; border-left: 1.5px solid var(--border); border-right: 1.5px solid var(--border);
+}
+.stepper-display span { color: var(--muted); font-size: 0.75rem; font-weight: 600; margin-left: 4px; }
+
 /* SUCCESS STATE */
 .success-card {
   background: white; border-radius: 20px; padding: 3rem 2rem;
@@ -360,79 +392,130 @@ nav {
     <div class="form-card active" id="card-1">
       <h2>What do you need cleaned?</h2>
 
-      <div class="service-grid">
-        <div class="service-option">
-          <input type="radio" name="service" id="svc-domestic" value="Domestic Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
-          <label for="svc-domestic">
-            <span class="svc-icon">🏠</span>
-            <span class="svc-name">Domestic Cleaning</span>
-            <span class="svc-price">From £36/visit</span>
-            <span class="svc-desc">Regular home clean</span>
-            <span class="service-check"></span>
-          </label>
+      <!-- MODE TOGGLE -->
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="mode-suggested" onclick="setMode('suggested')">📋 Suggested packages</button>
+        <button class="mode-btn" id="mode-custom" onclick="setMode('custom')">⏱ Custom hours</button>
+      </div>
+
+      <!-- ── SUGGESTED MODE ── -->
+      <div id="suggested-mode">
+        <div class="service-grid">
+          <div class="service-option">
+            <input type="radio" name="service" id="svc-domestic" value="Domestic Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
+            <label for="svc-domestic">
+              <span class="svc-icon">🏠</span>
+              <span class="svc-name">Domestic Cleaning</span>
+              <span class="svc-price">From £36/visit</span>
+              <span class="svc-desc">Regular home clean</span>
+              <span class="service-check"></span>
+            </label>
+          </div>
+          <div class="service-option">
+            <input type="radio" name="service" id="svc-office" value="Office Cleaning" data-stripe="https://buy.stripe.com/9B6eVc3Uo19W7XV6ei6sw02" data-type="business">
+            <label for="svc-office">
+              <span class="svc-icon">🏢</span>
+              <span class="svc-name">Office Cleaning</span>
+              <span class="svc-price">From £36/visit</span>
+              <span class="svc-desc">Workspace clean</span>
+              <span class="service-check"></span>
+            </label>
+          </div>
+          <div class="service-option">
+            <input type="radio" name="service" id="svc-deep" value="Deep Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
+            <label for="svc-deep">
+              <span class="svc-icon">✨</span>
+              <span class="svc-name">Deep Cleaning</span>
+              <span class="svc-price">From £72</span>
+              <span class="svc-desc">Top-to-bottom refresh</span>
+              <span class="service-check"></span>
+            </label>
+          </div>
         </div>
-        <div class="service-option">
-          <input type="radio" name="service" id="svc-office" value="Office Cleaning" data-stripe="https://buy.stripe.com/9B6eVc3Uo19W7XV6ei6sw02" data-type="business">
-          <label for="svc-office">
-            <span class="svc-icon">🏢</span>
-            <span class="svc-name">Office Cleaning</span>
-            <span class="svc-price">From £36/visit</span>
-            <span class="svc-desc">Workspace clean</span>
-            <span class="service-check"></span>
-          </label>
+
+        <div id="freq-section" style="display:none; margin-bottom:1.5rem;">
+          <div class="form-group" style="margin-bottom:0.75rem;"><label>Frequency</label></div>
+          <div class="freq-grid">
+            <div class="freq-option">
+              <input type="radio" name="frequency" id="freq-weekly" value="Weekly" data-discount="15">
+              <label for="freq-weekly">Weekly <span class="freq-discount">Save 15%</span></label>
+            </div>
+            <div class="freq-option">
+              <input type="radio" name="frequency" id="freq-fort" value="Fortnightly" data-discount="10">
+              <label for="freq-fort">Fortnightly <span class="freq-discount">Save 10%</span></label>
+            </div>
+            <div class="freq-option">
+              <input type="radio" name="frequency" id="freq-one" value="One-off" data-discount="0" checked>
+              <label for="freq-one">One-off <span class="freq-discount">&nbsp;</span></label>
+            </div>
+          </div>
         </div>
-        <div class="service-option">
-          <input type="radio" name="service" id="svc-deep" value="Deep Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03" data-type="residential">
-          <label for="svc-deep">
-            <span class="svc-icon">✨</span>
-            <span class="svc-name">Deep Cleaning</span>
-            <span class="svc-price">From £72</span>
-            <span class="svc-desc">Top-to-bottom refresh</span>
-            <span class="service-check"></span>
-          </label>
+
+        <div id="size-section" style="display:none; margin-bottom:1.5rem;">
+          <div class="form-group">
+            <label>Property size</label>
+            <select id="property-size">
+              <option value="" disabled selected>Select size…</option>
+              <option value="Studio / 1 bed" data-hours-dom="2" data-hours-office="2" data-hours-deep="4">Studio / 1 bed</option>
+              <option value="2 bed" data-hours-dom="2.5" data-hours-office="2" data-hours-deep="5">2 bed</option>
+              <option value="3 bed" data-hours-dom="3" data-hours-office="3" data-hours-deep="6">3 bed</option>
+              <option value="4+ bed" data-hours-dom="4" data-hours-office="4" data-hours-deep="8">4+ bed</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="price-preview" style="display:none; margin-bottom:1.5rem; padding:1rem 1.25rem; background:var(--green-light); border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:var(--muted); font-size:0.9rem;">Estimated price</span>
+          <span id="price-preview-value" style="font-weight:800; font-size:1.2rem; color:var(--green-dark);">£—</span>
         </div>
       </div>
 
-      <div id="freq-section" style="display:none; margin-bottom:1.5rem;">
-        <div class="form-group" style="margin-bottom:0.75rem;">
-          <label>Frequency</label>
-        </div>
-        <div class="freq-grid">
-          <div class="freq-option">
-            <input type="radio" name="frequency" id="freq-weekly" value="Weekly" data-discount="15">
-            <label for="freq-weekly">Weekly <span class="freq-discount">Save 15%</span></label>
-          </div>
-          <div class="freq-option">
-            <input type="radio" name="frequency" id="freq-fort" value="Fortnightly" data-discount="10">
-            <label for="freq-fort">Fortnightly <span class="freq-discount">Save 10%</span></label>
-          </div>
-          <div class="freq-option">
-            <input type="radio" name="frequency" id="freq-one" value="One-off" data-discount="0" checked>
-            <label for="freq-one">One-off <span class="freq-discount">&nbsp;</span></label>
-          </div>
-        </div>
-      </div>
-
-      <div id="size-section" style="display:none; margin-bottom:1.5rem;">
-        <div class="form-group">
-          <label>Property size</label>
-          <select id="property-size">
-            <option value="" disabled selected>Select size…</option>
-            <option value="Studio / 1 bed" data-hours-dom="2" data-hours-office="2" data-hours-deep="4">Studio / 1 bed</option>
-            <option value="2 bed" data-hours-dom="2.5" data-hours-office="2" data-hours-deep="5">2 bed</option>
-            <option value="3 bed" data-hours-dom="3" data-hours-office="3" data-hours-deep="6">3 bed</option>
-            <option value="4+ bed" data-hours-dom="4" data-hours-office="4" data-hours-deep="8">4+ bed</option>
+      <!-- ── CUSTOM MODE ── -->
+      <div id="custom-mode" style="display:none;">
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label>Service type</label>
+          <select id="custom-service-select" onchange="onCustomServiceChange()">
+            <option value="" disabled selected>Select a service…</option>
+            <option value="Domestic Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03">🏠 Domestic Cleaning</option>
+            <option value="Office Cleaning" data-stripe="https://buy.stripe.com/9B6eVc3Uo19W7XV6ei6sw02">🏢 Office Cleaning</option>
+            <option value="Deep Cleaning" data-stripe="https://buy.stripe.com/aFa28q9eIaKw6TR46a6sw03">✨ Deep Cleaning</option>
           </select>
         </div>
+
+        <div id="custom-freq-section" style="display:none; margin-bottom:1.25rem;">
+          <div class="form-group" style="margin-bottom:0.75rem;"><label>Frequency</label></div>
+          <div class="freq-grid">
+            <div class="freq-option">
+              <input type="radio" name="custom-frequency" id="cfreq-weekly" value="Weekly" data-discount="15">
+              <label for="cfreq-weekly">Weekly <span class="freq-discount">Save 15%</span></label>
+            </div>
+            <div class="freq-option">
+              <input type="radio" name="custom-frequency" id="cfreq-fort" value="Fortnightly" data-discount="10">
+              <label for="cfreq-fort">Fortnightly <span class="freq-discount">Save 10%</span></label>
+            </div>
+            <div class="freq-option">
+              <input type="radio" name="custom-frequency" id="cfreq-one" value="One-off" data-discount="0" checked>
+              <label for="cfreq-one">One-off <span class="freq-discount">&nbsp;</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div id="custom-hours-section" style="display:none;">
+          <div class="form-group" style="margin-bottom:0.75rem;"><label>Number of hours</label></div>
+          <div class="hours-stepper">
+            <button class="stepper-btn" onclick="changeHours(-1)">−</button>
+            <div class="stepper-display" id="hours-display">1 <span>hr</span></div>
+            <button class="stepper-btn" onclick="changeHours(1)">+</button>
+          </div>
+          <div id="custom-price-preview" style="padding:1rem 1.25rem; background:var(--green-light); border-radius:12px; display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem;">
+            <span style="color:var(--muted); font-size:0.9rem;">Total</span>
+            <span id="custom-price-value" style="font-weight:800; font-size:1.2rem; color:var(--green-dark);">£18.00</span>
+          </div>
+        </div>
       </div>
 
-      <div id="price-preview" style="display:none; margin-bottom:1.5rem; padding:1rem 1.25rem; background:var(--green-light); border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="color:var(--muted); font-size:0.9rem;">Estimated price</span>
-        <span id="price-preview-value" style="font-weight:800; font-size:1.2rem; color:var(--green-dark);">£—</span>
-      </div>
-
-      <div id="step1-error" class="login-error" style="text-align:left;">Please select a service to continue.</div>
-      <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+      <div id="step1-error" class="login-error" style="text-align:left; margin-top:1rem;">Please complete your selection to continue.</div>
+      <button class="btn-primary" onclick="goStep(2)" style="margin-top:1rem;">Continue →</button>
     </div>
 
     <!-- ── STEP 2: DATE / ADDRESS / DETAILS ── -->
@@ -704,6 +787,43 @@ radios().forEach(r => r.addEventListener('change', onServiceChange));
 document.querySelectorAll('input[name="frequency"]').forEach(r => r.addEventListener('change', updatePrice));
 document.getElementById('property-size').addEventListener('change', updatePrice);
 
+/* ── Mode toggle ── */
+let bookingMode = 'suggested'; // 'suggested' | 'custom'
+let customHours = 1;
+
+function setMode(mode) {
+  bookingMode = mode;
+  document.getElementById('mode-suggested').classList.toggle('active', mode === 'suggested');
+  document.getElementById('mode-custom').classList.toggle('active', mode === 'custom');
+  document.getElementById('suggested-mode').style.display = mode === 'suggested' ? 'block' : 'none';
+  document.getElementById('custom-mode').style.display = mode === 'custom' ? 'block' : 'none';
+  document.getElementById('step1-error').style.display = 'none';
+}
+
+function onCustomServiceChange() {
+  const sel = document.getElementById('custom-service-select');
+  const val = sel.value;
+  const isDeep = val === 'Deep Cleaning';
+  document.getElementById('custom-freq-section').style.display = isDeep ? 'none' : 'block';
+  document.getElementById('custom-hours-section').style.display = 'block';
+  document.getElementById('step1-error').style.display = 'none';
+  updateCustomPrice();
+}
+
+function changeHours(delta) {
+  customHours = Math.max(1, customHours + delta);
+  const display = document.getElementById('hours-display');
+  display.innerHTML = customHours + ' <span>' + (customHours === 1 ? 'hr' : 'hrs') + '</span>';
+  updateCustomPrice();
+}
+
+function updateCustomPrice() {
+  const total = (customHours * HOURLY_RATE).toFixed(2);
+  document.getElementById('custom-price-value').textContent = '£' + total;
+}
+
+document.querySelectorAll('input[name="custom-frequency"]').forEach(r => r.addEventListener('change', updateCustomPrice));
+
 function onServiceChange() {
   const v = document.querySelector('input[name="service"]:checked')?.value;
   const isDeep = v === 'Deep Cleaning';
@@ -717,16 +837,34 @@ function onServiceChange() {
 const HOURLY_RATE = 18;
 
 function getHours() {
+  if (bookingMode === 'custom') return customHours;
   const svc = document.querySelector('input[name="service"]:checked');
   const sizeEl = document.getElementById('property-size');
   const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
   if (!svc || !sizeOpt || !sizeOpt.value) return null;
   const type = svc.value;
-  let hours;
-  if (type === 'Office Cleaning') hours = parseFloat(sizeOpt.dataset.hoursOffice || 2);
-  else if (type === 'Deep Cleaning') hours = parseFloat(sizeOpt.dataset.hoursDeep || 4);
-  else hours = parseFloat(sizeOpt.dataset.hoursDom || 2);
-  return hours;
+  if (type === 'Office Cleaning') return parseFloat(sizeOpt.dataset.hoursOffice || 2);
+  if (type === 'Deep Cleaning') return parseFloat(sizeOpt.dataset.hoursDeep || 4);
+  return parseFloat(sizeOpt.dataset.hoursDom || 2);
+}
+
+function getServiceData() {
+  if (bookingMode === 'custom') {
+    const sel = document.getElementById('custom-service-select');
+    const opt = sel.options[sel.selectedIndex];
+    return { value: sel.value, stripeUrl: opt?.dataset?.stripe || '' };
+  }
+  const svc = document.querySelector('input[name="service"]:checked');
+  return svc ? { value: svc.value, stripeUrl: svc.dataset.stripe } : null;
+}
+
+function getFrequency() {
+  if (bookingMode === 'custom') {
+    const f = document.querySelector('input[name="custom-frequency"]:checked');
+    return f ? { value: f.value, discount: parseFloat(f.dataset.discount || 0) } : { value: 'One-off', discount: 0 };
+  }
+  const f = document.querySelector('input[name="frequency"]:checked');
+  return f ? { value: f.value, discount: parseFloat(f.dataset.discount || 0) } : { value: 'One-off', discount: 0 };
 }
 
 function updatePrice() {
@@ -737,12 +875,20 @@ function updatePrice() {
 }
 
 function validateStep1() {
-  const svc = document.querySelector('input[name="service"]:checked');
-  if (!svc) { document.getElementById('step1-error').style.display = 'block'; return false; }
-  const sizeEl = document.getElementById('property-size');
-  if (sizeEl.style.display !== 'none' && !sizeEl.value) {
-    alert('Please select a property size.'); return false;
+  const errEl = document.getElementById('step1-error');
+  if (bookingMode === 'suggested') {
+    const svc = document.querySelector('input[name="service"]:checked');
+    if (!svc) { errEl.style.display = 'block'; return false; }
+    const sizeEl = document.getElementById('property-size');
+    if (!sizeEl.value) { errEl.textContent = 'Please select a property size.'; errEl.style.display = 'block'; return false; }
+  } else {
+    const sel = document.getElementById('custom-service-select');
+    if (!sel.value) { errEl.textContent = 'Please select a service type.'; errEl.style.display = 'block'; return false; }
+    if (document.getElementById('custom-hours-section').style.display === 'none') {
+      errEl.textContent = 'Please select a service to see hours.'; errEl.style.display = 'block'; return false;
+    }
   }
+  errEl.style.display = 'none';
   return true;
 }
 
@@ -776,21 +922,21 @@ function validateStep2() {
 
 /* ── Summary ── */
 function buildSummary() {
-  const svc = document.querySelector('input[name="service"]:checked');
-  const freq = document.querySelector('input[name="frequency"]:checked');
+  const svcData = getServiceData();
+  const freqData = getFrequency();
   const sizeEl = document.getElementById('property-size');
   const time = document.querySelector('input[name="time"]:checked');
   const hours = getHours();
   const total = hours ? Math.round(hours * HOURLY_RATE * 100) / 100 : 0;
-  const freqVal = freq ? freq.value : 'One-off';
-  const discountPct = freq ? parseFloat(freq.dataset.discount || 0) : 0;
+  const sizeLabel = bookingMode === 'custom' ? 'Custom' : (sizeEl.value || '—');
 
   bookingData = {
-    service: svc.value,
-    frequency: freqVal,
-    size: sizeEl.value || '—',
+    service: svcData.value,
+    frequency: freqData.value,
+    size: sizeLabel,
     hours: hours,
-    stripeUrl: svc.dataset.stripe,
+    bookingMode: bookingMode,
+    stripeUrl: svcData.stripeUrl,
     name: document.getElementById('fname').value + ' ' + document.getElementById('lname').value,
     email: document.getElementById('email').value,
     phone: document.getElementById('phone').value,
@@ -801,18 +947,20 @@ function buildSummary() {
     total: total,
     subtotal: total,
     discount: 0,
-    discountPct: discountPct,
+    discountPct: freqData.discount,
   };
 
   const dateStr = new Date(bookingData.date).toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  const discountNote = discountPct > 0
-    ? `<div class="summary-row"><span class="summary-label">Discount code</span><span class="summary-value" style="color:var(--green-dark)">${freqVal === 'Weekly' ? 'WEEKLY15' : 'FORTNIGHTLY10'} (${discountPct}% off — enter on Stripe)</span></div>`
+  const discountNote = freqData.discount > 0
+    ? `<div class="summary-row"><span class="summary-label">Discount code</span><span class="summary-value" style="color:var(--green-dark)">${freqData.value === 'Weekly' ? 'WEEKLY15' : 'FORTNIGHTLY10'} (${freqData.discount}% off — enter on Stripe)</span></div>`
     : '';
+  const sizeRow = bookingMode === 'suggested'
+    ? `<div class="summary-row"><span class="summary-label">Property size</span><span class="summary-value">${sizeLabel}</span></div>` : '';
 
   document.getElementById('booking-summary').innerHTML = `
     <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value">${bookingData.service}</span></div>
     <div class="summary-row"><span class="summary-label">Frequency</span><span class="summary-value">${bookingData.frequency}</span></div>
-    <div class="summary-row"><span class="summary-label">Property size</span><span class="summary-value">${bookingData.size}</span></div>
+    ${sizeRow}
     <div class="summary-row"><span class="summary-label">Duration</span><span class="summary-value">${hours}h × £${HOURLY_RATE}/h</span></div>
     <div class="summary-row"><span class="summary-label">Date</span><span class="summary-value">${dateStr}</span></div>
     <div class="summary-row"><span class="summary-label">Time</span><span class="summary-value">${bookingData.time}</span></div>
@@ -886,9 +1034,14 @@ function resetBooking() {
   document.getElementById('freq-section').style.display = 'none';
   document.getElementById('size-section').style.display = 'none';
   document.getElementById('price-preview').style.display = 'none';
+  document.getElementById('custom-freq-section').style.display = 'none';
+  document.getElementById('custom-hours-section').style.display = 'none';
   document.getElementById('step-indicator').style.display = 'flex';
   document.getElementById('card-success').classList.remove('active');
-  document.getElementById('pay-btn').textContent = 'Pay & Confirm Booking';
+  document.getElementById('pay-btn').textContent = 'Continue to payment →';
+  customHours = 1;
+  document.getElementById('hours-display').innerHTML = '1 <span>hr</span>';
+  setMode('suggested');
   goStep(1);
 }
 
@@ -983,4 +1136,19 @@ async function renderBookings() {
       </tr>`;
     }).join('');
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load bookings. Check your Supabase connection.</div></div></td></tr>`;
+    console.error('Render error:', e);
+  }
+}
+
+async function updateStatus(ref, status) {
+  try {
+    await sbFetch('PATCH', { status }, `ref=eq.${ref}`);
+    renderStats(); renderBookings();
+  } catch(e) {
+    alert('Could not update status. Please try again.'); console.error(e);
+  }
+}
+</script>
+</body>
+</html>
