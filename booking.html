@@ -903,8 +903,13 @@ function validateStep1() {
   if (bookingMode === 'suggested') {
     const svc = document.querySelector('input[name="service"]:checked');
     if (!svc) { errEl.style.display = 'block'; return false; }
-    const sizeEl = document.getElementById('property-size');
-    if (!sizeEl.value) { errEl.textContent = 'Please select a property size.'; errEl.style.display = 'block'; return false; }
+    const sizeEl = v === 'Office Cleaning'
+  ? document.getElementById('office-size')
+  : document.getElementById('property-size');
+if (!sizeEl.value) {
+  errEl.textContent = 'Please select a size to continue.';
+  errEl.style.display = 'block'; return false;
+}
   } else {
     const sel = document.getElementById('custom-service-select');
     if (!sel.value) { errEl.textContent = 'Please select a service type.'; errEl.style.display = 'block'; return false; }
