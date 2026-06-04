@@ -835,11 +835,19 @@ document.querySelectorAll('input[name="custom-frequency"]').forEach(r => r.addEv
 
 function onServiceChange() {
   const v = document.querySelector('input[name="service"]:checked')?.value;
+  const isOffice = v === 'Office Cleaning';
   const isDeep = v === 'Deep Cleaning';
+
   document.getElementById('freq-section').style.display = isDeep ? 'none' : 'block';
   document.getElementById('size-section').style.display = 'block';
+  document.getElementById('property-size').style.display = isOffice ? 'none' : 'block';
+  document.getElementById('office-size').style.display = isOffice ? 'block' : 'none';
   document.getElementById('price-preview').style.display = 'flex';
   document.getElementById('step1-error').style.display = 'none';
+
+  // Reset both selects on service change
+  document.getElementById('property-size').value = '';
+  document.getElementById('office-size').value = '';
   updatePrice();
 }
 
