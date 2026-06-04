@@ -795,6 +795,7 @@ const radios = () => document.querySelectorAll('input[name="service"]');
 radios().forEach(r => r.addEventListener('change', onServiceChange));
 document.querySelectorAll('input[name="frequency"]').forEach(r => r.addEventListener('change', updatePrice));
 document.getElementById('property-size').addEventListener('change', updatePrice);
+document.getElementById('office-size').addEventListener('change', updatePrice);
 
 /* ── Mode toggle ── */
 let bookingMode = 'suggested'; // 'suggested' | 'custom'
@@ -902,14 +903,15 @@ function validateStep1() {
   const errEl = document.getElementById('step1-error');
   if (bookingMode === 'suggested') {
     const svc = document.querySelector('input[name="service"]:checked');
-    if (!svc) { errEl.style.display = 'block'; return false; }
+    if (!svc) { errEl.textContent = 'Please select a service to continue.'; errEl.style.display = 'block'; return false; }
+    const v = svc.value;
     const sizeEl = v === 'Office Cleaning'
-  ? document.getElementById('office-size')
-  : document.getElementById('property-size');
-if (!sizeEl.value) {
-  errEl.textContent = 'Please select a size to continue.';
-  errEl.style.display = 'block'; return false;
-}
+      ? document.getElementById('office-size')
+      : document.getElementById('property-size');
+    if (!sizeEl.value) {
+      errEl.textContent = 'Please select a size to continue.';
+      errEl.style.display = 'block'; return false;
+    }
   } else {
     const sel = document.getElementById('custom-service-select');
     if (!sel.value) { errEl.textContent = 'Please select a service type.'; errEl.style.display = 'block'; return false; }
