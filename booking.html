@@ -856,13 +856,20 @@ const HOURLY_RATE = 18;
 function getHours() {
   if (bookingMode === 'custom') return customHours;
   const svc = document.querySelector('input[name="service"]:checked');
-  const sizeEl = document.getElementById('property-size');
-  const sizeOpt = sizeEl.options[sizeEl.selectedIndex];
-  if (!svc || !sizeOpt || !sizeOpt.value) return null;
+  if (!svc) return null;
   const type = svc.value;
-  if (type === 'Office Cleaning') return parseFloat(sizeOpt.dataset.hoursOffice || 2);
-  if (type === 'Deep Cleaning') return parseFloat(sizeOpt.dataset.hoursDeep || 4);
-  return parseFloat(sizeOpt.dataset.hoursDom || 2);
+
+  if (type === 'Office Cleaning') {
+    const sel = document.getElementById('office-size');
+    const opt = sel.options[sel.selectedIndex];
+    return opt?.dataset?.hoursOffice ? parseFloat(opt.dataset.hoursOffice) : null;
+  }
+  const sel = document.getElementById('property-size');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt?.value) return null;
+  return type === 'Deep Cleaning'
+    ? parseFloat(opt.dataset.hoursDeep)
+    : parseFloat(opt.dataset.hoursDom);
 }
 
 function getServiceData() {
