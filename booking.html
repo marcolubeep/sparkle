@@ -641,11 +641,11 @@ nav {
     <!-- ── SUCCESS STATE ── -->
     <div class="form-card" id="card-success">
       <div class="success-card">
-        <div class="success-icon">✨</div>
-        <h2>You're all booked!</h2>
-        <p>We'll send a confirmation email shortly. Our team is excited to make your space sparkle.</p>
+        <div class="success-icon" id="success-icon">✨</div>
+        <h2 id="success-title">You're all booked!</h2>
+        <p id="success-msg">Payment confirmed. Our team is excited to make your space sparkle.</p>
         <div class="booking-ref" id="booking-ref-display"></div>
-        <p style="margin-top:0.5rem; font-size:0.85rem;">Save your reference number in case you need to make changes.</p>
+        <p style="margin-top:0.5rem; font-size:0.85rem;" id="success-sub">Save your reference number in case you need to make changes.</p>
         <button class="btn-secondary" style="width:auto; padding:12px 30px; margin-top:1.5rem;" onclick="resetBooking()">Book another clean</button>
       </div>
     </div>
@@ -1056,6 +1056,9 @@ async function submitBooking() {
 
     btn.textContent = 'Redirecting to Stripe…';
 
+    // Store ref in sessionStorage so we can confirm it on return from Stripe
+    sessionStorage.setItem('smk_pending_ref', ref);
+
     // Small delay so user sees the message, then redirect
     setTimeout(() => { window.location.href = stripeUrl; }, 800);
 
@@ -1209,11 +1212,64 @@ async function deleteBooking(ref) {
 </html>
 
 <script>
-// Auto-open admin if URL contains #admin
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+
+  // ── Auto-open admin if URL contains #admin ──
   if (window.location.hash === '#admin') {
     showPage('admin');
     updateNav(null);
+    return;
+  }
+
+  // ── Handle return from Stripe payment ──
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const ref = sessionStorage.getItem('smk_pending_ref');
+
+    // Clean URL so refresh doesn't retrigger
+    window.history.replaceState({}, '', window.location.pathname);
+
+    if (ref) {
+      // Mark booking as paid in Supabase
+      try {
+        await sbFetch('PATCH', { status: 'paid' }, `ref=eq.${ref}`);
+        sessionStorage.removeItem('smk_pending_ref');
+
+        // Show success screen
+        document.getElementById('step-indicator').style.display = 'none';
+        [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
+        document.getElementById('card-success').classList.add('active');
+        document.getElementById('booking-ref-display').textContent = ref;
+        document.getElementById('success-icon').textContent = '✅';
+        document.getElementById('success-title').textContent = "Payment confirmed!";
+        document.getElementById('success-msg').textContent = "Your booking is confirmed and payment received. We'll be in touch soon.";
+        showPage('booking');
+        updateNav('nav-book');
+      } catch(e) {
+        // Payment went through on Stripe but we couldn't update DB — show warning
+        document.getElementById('step-indicator').style.display = 'none';
+        [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
+        document.getElementById('card-success').classList.add('active');
+        document.getElementById('booking-ref-display').textContent = ref || '—';
+        document.getElementById('success-icon').textContent = '⚠️';
+        document.getElementById('success-title').textContent = "Payment received!";
+        document.getElementById('success-msg').textContent = "Your payment went through but we had a small issue updating our records. Please quote your reference and contact us — we have your booking.";
+        showPage('booking');
+        updateNav('nav-book');
+        console.error('Failed to mark paid:', e);
+      }
+    } else {
+      // No ref in session (e.g. user refreshed) — show generic success
+      document.getElementById('step-indicator').style.display = 'none';
+      [1,2,3].forEach(i => document.getElementById('card-' + i).classList.remove('active'));
+      document.getElementById('card-success').classList.add('active');
+      document.getElementById('success-icon').textContent = '✅';
+      document.getElementById('success-title').textContent = "Payment confirmed!";
+      document.getElementById('success-msg').textContent = "Your payment was received. Check your email for confirmation, or contact us with any questions.";
+      document.getElementById('success-sub').textContent = '';
+      showPage('booking');
+      updateNav('nav-book');
+    }
   }
 });
 </script>
