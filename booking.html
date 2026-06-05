@@ -303,6 +303,7 @@ nav {
 .badge-confirmed { background: var(--green-light); color: var(--green-dark); }
 .badge-paid { background: #e6f4ff; color: #1a5fa0; }
 .badge-cancelled { background: #fdf0ef; color: var(--error); }
+.badge-archived { background: #f0f0f0; color: #888; }
 
 .action-btns { display: flex; gap: 6px; }
 .action-btn {
@@ -316,6 +317,10 @@ nav {
 .action-btn.cancel:hover { background: var(--error); color: white; }
 .action-btn.paid { border-color: #1a5fa0; color: #1a5fa0; background: white; }
 .action-btn.paid:hover { background: #1a5fa0; color: white; }
+.action-btn.archive { border-color: #999; color: #999; background: white; }
+.action-btn.archive:hover { background: #888; color: white; border-color: #888; }
+.action-btn.delete { border-color: #8b0000; color: #8b0000; background: white; }
+.action-btn.delete:hover { background: #8b0000; color: white; }
 
 .empty-state { text-align: center; padding: 3rem; color: var(--muted); }
 .empty-state-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
@@ -334,8 +339,9 @@ nav {
   .nav-links a { font-size: 0.8rem; }
   .form-row { grid-template-columns: 1fr; }
   .time-slots { grid-template-columns: repeat(3,1fr); }
-  .bookings-table th:nth-child(4), .bookings-table td:nth-child(4) { display: none; }
+  .bookings-table th:nth-child(3), .bookings-table td:nth-child(3) { display: none; }
   .bookings-table th:nth-child(5), .bookings-table td:nth-child(5) { display: none; }
+  .bookings-table th:nth-child(6), .bookings-table td:nth-child(6) { display: none; }
 }
 </style>
 </head>
@@ -689,6 +695,7 @@ nav {
       <button class="filter-btn" data-filter="confirmed" onclick="setFilter('confirmed')">Confirmed</button>
       <button class="filter-btn" data-filter="paid" onclick="setFilter('paid')">Paid</button>
       <button class="filter-btn" data-filter="cancelled" onclick="setFilter('cancelled')">Cancelled</button>
+      <button class="filter-btn" data-filter="archived" onclick="setFilter('archived')">🗄 Archived</button>
     </div>
 
     <div class="bookings-table-wrap">
@@ -697,6 +704,7 @@ nav {
           <tr>
             <th>Ref</th>
             <th>Customer</th>
+            <th>Phone & Address</th>
             <th>Service</th>
             <th>Date & Time</th>
             <th>Amount</th>
@@ -722,14 +730,15 @@ const TABLE = 'bookings';
 async function sbFetch(method, body, filters) {
   let url = `${SUPABASE_URL}/rest/v1/${TABLE}`;
   if (filters) url += '?' + filters;
+  const headers = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+  };
+  if (method !== 'DELETE') headers['Prefer'] = 'return=representation';
   const res = await fetch(url, {
     method,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
-    },
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) { const t = await res.text(); throw new Error(t); }
@@ -1126,7 +1135,7 @@ async function renderStats() {
 
 async function renderBookings() {
   const tbody = document.getElementById('bookings-body');
-  tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon" style="font-size:1.5rem;">⏳</div><div>Loading bookings…</div></div></td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon" style="font-size:1.5rem;">⏳</div><div>Loading bookings…</div></div></td></tr>`;
   try {
     const sort = document.getElementById('admin-sort')?.value || 'newest';
     let orderParam = 'order=created_at.desc';
@@ -1138,7 +1147,7 @@ async function renderBookings() {
     const data = await sbFetch('GET', null, filters);
 
     if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📋</div><div>No bookings found</div></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">📋</div><div>No bookings found</div></div></td></tr>`;
       return;
     }
     tbody.innerHTML = data.map(b => {
@@ -1148,17 +1157,22 @@ async function renderBookings() {
         confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
         paid: '<span class="badge badge-paid">Paid</span>',
         cancelled: '<span class="badge badge-cancelled">Cancelled</span>',
+        archived: '<span class="badge badge-archived">Archived</span>',
       }[b.status] || '';
 
       let actions = '';
-      if (b.status === 'pending') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','confirmed')">Confirm</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
-      else if (b.status === 'confirmed') actions = `<button class="action-btn paid" onclick="updateStatus('${b.ref}','paid')">Mark paid</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>`;
-      else if (b.status === 'paid') actions = `<button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Refund</button>`;
-      else actions = '<span style="color:var(--muted);font-size:12px;">—</span>';
+      const archiveBtn = `<button class="action-btn archive" onclick="updateStatus('${b.ref}','archived')" title="Archive">🗄</button>`;
+      const deleteBtn = `<button class="action-btn delete" onclick="deleteBooking('${b.ref}')" title="Delete permanently">🗑</button>`;
+      if (b.status === 'pending') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','confirmed')">Confirm</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>${archiveBtn}`;
+      else if (b.status === 'confirmed') actions = `<button class="action-btn paid" onclick="updateStatus('${b.ref}','paid')">Mark paid</button><button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Cancel</button>${archiveBtn}`;
+      else if (b.status === 'paid') actions = `<button class="action-btn cancel" onclick="updateStatus('${b.ref}','cancelled')">Refund</button>${archiveBtn}`;
+      else if (b.status === 'archived') actions = `<button class="action-btn confirm" onclick="updateStatus('${b.ref}','pending')">Restore</button>${deleteBtn}`;
+      else actions = `${archiveBtn}`;
 
-      return `<tr>
+      return `<tr style="${b.status === 'archived' ? 'opacity:0.55;' : ''}">
         <td style="font-weight:700; font-size:12px; color:var(--green-dark);">${b.ref}</td>
         <td><div style="font-weight:700;">${b.name}</div><div style="font-size:12px;color:var(--muted);">${b.email}</div></td>
+        <td><div style="font-size:12px;font-weight:700;">${b.phone||'—'}</div><div style="font-size:11px;color:var(--muted);">${b.address||'—'}</div></td>
         <td><div>${b.service}</div><div style="font-size:12px;color:var(--muted);">${b.frequency||''}</div></td>
         <td>${dateStr}<br><span style="font-size:12px;color:var(--muted);">${b.time||''}</span></td>
         <td style="font-weight:700;">£${b.total||'—'}</td>
@@ -1167,7 +1181,7 @@ async function renderBookings() {
       </tr>`;
     }).join('');
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load bookings. Check your Supabase connection.</div></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">⚠️</div><div>Could not load bookings. Check your Supabase connection.</div></div></td></tr>`;
     console.error('Render error:', e);
   }
 }
@@ -1178,6 +1192,16 @@ async function updateStatus(ref, status) {
     renderStats(); renderBookings();
   } catch(e) {
     alert('Could not update status. Please try again.'); console.error(e);
+  }
+}
+
+async function deleteBooking(ref) {
+  if (!confirm('Permanently delete booking ' + ref + '? This cannot be undone.')) return;
+  try {
+    await sbFetch('DELETE', null, `ref=eq.${ref}`);
+    renderStats(); renderBookings();
+  } catch(e) {
+    alert('Could not delete booking. Please try again.'); console.error(e);
   }
 }
 </script>
