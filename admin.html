@@ -10,6 +10,7 @@
     --green: #3a9e7e; --green-light: #e8f7f2; --green-dark: #1f6b53;
     --text: #1a2e25; --muted: #6b8f7e; --bg: #f5fbf8;
     --border: rgba(58,158,126,0.18); --error: #c0392b; --white: #ffffff;
+    --blue: #2980b9; --blue-light: #ebf5fb;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -72,7 +73,7 @@
   }
 
   /* ── ADMIN DASHBOARD ── */
-  #admin-screen { display: none; padding: 5.5rem 1.5rem 3rem; max-width: 1200px; margin: 0 auto; }
+  #admin-screen { display: none; padding: 5.5rem 1.5rem 3rem; max-width: 1300px; margin: 0 auto; }
 
   .dashboard-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -123,7 +124,7 @@
     white-space: nowrap;
   }
   td {
-    padding: 12px 16px; font-size: 0.875rem; color: var(--text);
+    padding: 12px 14px; font-size: 0.875rem; color: var(--text);
     border-top: 1px solid var(--border); vertical-align: middle;
   }
   tr:hover td { background: var(--bg); }
@@ -132,21 +133,28 @@
     display: inline-block; padding: 3px 10px; border-radius: 50px;
     font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
   }
-  .badge-paid    { background: #e8f7f2; color: #1f6b53; }
-  .badge-pending { background: #fef9e7; color: #b7770d; }
+  .badge-paid      { background: #e8f7f2; color: #1f6b53; }
+  .badge-pending   { background: #fef9e7; color: #b7770d; }
   .badge-cancelled { background: #fdf0ee; color: #c0392b; }
+  .badge-completed { background: var(--blue-light); color: var(--blue); }
   .svc-badge {
     display: inline-block; padding: 3px 10px; border-radius: 50px;
     font-size: 0.72rem; font-weight: 700; background: var(--bg); color: var(--muted);
   }
   
-  /* ACTION BUTTON */
-  .btn-cancel {
-    background: transparent; border: 1.5px solid var(--border); color: var(--muted);
-    padding: 4px 12px; border-radius: 50px; font-family: 'Nunito', sans-serif;
-    font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  /* ACTIONS CONTAINER */
+  .actions-cell {
+    display: flex; gap: 5px; flex-wrap: wrap; align-items: center;
   }
-  .btn-cancel:hover { background: #fdf0ee; border-color: var(--error); color: var(--error); }
+  .btn-action {
+    background: white; border: 1.5px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 50px; font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-action.complete:hover { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .btn-action.cancel:hover { background: #fdf0ee; border-color: var(--error); color: var(--error); }
+  .btn-action.delete { border-color: rgba(192, 57, 43, 0.2); color: #e67e22; }
+  .btn-action.delete:hover { background: #fdf0ee; border-color: var(--error); color: var(--error); }
 
   .empty-state {
     text-align: center; padding: 3rem; color: var(--muted); font-size: 0.95rem;
@@ -158,7 +166,7 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* MOBILE */
-  @media (max-width: 700px) {
+  @media (max-width: 850px) {
     .hide-mobile { display: none; }
     nav { padding: 0.85rem 1.2rem; }
   }
@@ -233,6 +241,7 @@
       <option value="">All statuses</option>
       <option value="paid">Paid</option>
       <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
       <option value="cancelled">Cancelled</option>
     </select>
     <button class="btn-refresh" onclick="loadBookings()">↻ Refresh</button>
@@ -251,7 +260,7 @@
           <th>Total</th>
           <th>Status</th>
           <th class="hide-mobile">Booked</th>
-          <th>Actions</th>
+          <th style="min-width: 150px;">Actions</th>
         </tr>
       </thead>
       <tbody id="bookings-body"></tbody>
@@ -351,7 +360,7 @@ async function loadBookings() {
 
 // ─── STATS ────────────────────────────────────────────────────────────────
 function updateStats() {
-  const paid = allBookings.filter(b => b.status === 'paid')
+  const paid = allBookings.filter(b => b.status === 'paid' || b.status === 'completed')
   const now  = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
   const nextWeek   = new Date(now); nextWeek.setDate(nextWeek.getDate() + 7)
@@ -393,9 +402,10 @@ function applyFilters() {
   renderTable(filtered)
 }
 
-// ─── CANCEL BOOKING ───────────────────────────────────────────────────────
-async function cancelBooking(id) {
-  if (!confirm('Are you sure you want to cancel this booking?')) return
+// ─── UPDATE STATUS (CANCEL / COMPLETE) ────────────────────────────────────
+async function updateStatus(id, newStatus) {
+  const label = newStatus === 'cancelled' ? 'cancel' : 'mark as completed';
+  if (!confirm(`Are you sure you want to ${label} this booking?`)) return
 
   const token = authToken || sessionStorage.getItem('smk_admin_token')
   if (!token) return
@@ -405,16 +415,38 @@ async function cancelBooking(id) {
     headers: {
       'apikey': SUPABASE_ANON,
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ status: 'cancelled' })
+    body: JSON.stringify({ status: newStatus })
   })
 
   if (res.ok) {
     loadBookings()
   } else {
     alert('Error updating booking status. Please check your permissions.')
+  }
+}
+
+// ─── DELETE ROW DEFINITELY ────────────────────────────────────────────────
+async function deleteBooking(id, ref) {
+  if (!confirm(`⚠️ DANGER: Are you absolutely sure you want to PERMANENTLY DELETE booking ${ref || ''}? This row will be completely removed from the database.`)) return
+
+  const token = authToken || sessionStorage.getItem('smk_admin_token')
+  if (!token) return
+
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/bookings?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_ANON,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
+
+  if (res.ok) {
+    loadBookings()
+  } else {
+    alert('Error deleting booking. Please verify your Supabase RLS delete settings.')
   }
 }
 
@@ -440,14 +472,21 @@ function renderTable(bookings) {
       ? new Date(b.date + 'T12:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
       : '—'
     const bookedStr = new Date(b.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short' })
-    const statusBadge = `<span class="badge badge-${b.status || 'pending'}">${b.status || 'pending'}</span>`
+    const currentStatus = b.status || 'pending';
+    const statusBadge = `<span class="badge badge-${currentStatus}">${currentStatus}</span>`
     const svcLabel = SVC_LABELS[b.service] || b.service || '—'
     const freq = b.frequency && b.frequency !== 'one-off' ? ` · ${FREQ_LABELS[b.frequency] || b.frequency}` : ''
 
-    // Genera l'azione in base allo stato attuale
-    const actionCell = b.status !== 'cancelled' 
-      ? `<button class="btn-cancel" onclick="cancelBooking('${b.id}')">Cancel</button>` 
-      : `<span style="font-size:0.8rem;color:var(--muted)">—</span>`
+    // Generazione dinamica pulsanti azione
+    let actionButtons = '';
+    
+    if (currentStatus !== 'cancelled' && currentStatus !== 'completed') {
+      actionButtons += `<button class="btn-action complete" onclick="updateStatus('${b.id}', 'completed')">✓ Delivered</button>`;
+      actionButtons += `<button class="btn-action cancel" onclick="updateStatus('${b.id}', 'cancelled')">Cancel</button>`;
+    }
+    
+    // Pulsante elimina riga definitivo sempre visibile
+    actionButtons += `<button class="btn-action delete" onclick="deleteBooking('${b.id}', '${b.ref || ''}')">🗑 Delete</button>`;
 
     return `<tr>
       <td><span class="ref-code">${b.ref || '—'}</span></td>
@@ -468,7 +507,11 @@ function renderTable(bookings) {
       <td style="font-weight:800;color:var(--green-dark)">${b.total ? '£' + Number(b.total).toFixed(2) : '—'}</td>
       <td>${statusBadge}</td>
       <td class="hide-mobile" style="font-size:0.78rem;color:var(--muted)">${bookedStr}</td>
-      <td>${actionCell}</td>
+      <td>
+        <div class="actions-cell">
+          ${actionButtons}
+        </div>
+      </td>
     </tr>`
   }).join('')
 }
