@@ -129,4 +129,589 @@
   }
   .service-opt:hover { border-color: var(--green); background: var(--green-light); }
   .service-opt.selected { border-color: var(--green); background: var(--green-light); }
-  .service-opt .opt-icon { font-size
+  .service-opt .opt-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .service-opt .opt-name { font-weight: 800; font-size: 0.82rem; color: var(--text); }
+  .service-opt .opt-price { font-size: 0.75rem; color: var(--green-dark); font-weight: 600; }
+
+  /* FREQUENCY */
+  .freq-options { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .freq-opt {
+    flex: 1; min-width: 80px; border: 2px solid var(--border); border-radius: 50px;
+    padding: 8px 12px; cursor: pointer; text-align: center;
+    font-size: 0.82rem; font-weight: 700; color: var(--muted);
+    transition: all 0.2s; background: var(--bg);
+  }
+  .freq-opt:hover { border-color: var(--green); color: var(--green-dark); }
+  .freq-opt.selected { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+
+  /* PRICE SUMMARY */
+  .price-summary {
+    background: var(--green-light); border-radius: 12px; padding: 1.25rem;
+    margin-top: 1.5rem; border: 1px solid rgba(58,158,126,0.2);
+  }
+  .price-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; color: var(--muted); }
+  .price-row.discount { color: var(--green-dark); }
+  .price-row.total { font-size: 1.1rem; font-weight: 800; color: var(--text); border-top: 1px solid var(--border); padding-top: 0.6rem; margin-top: 0.4rem; }
+
+  /* BUTTONS */
+  .btn-nav { display: flex; gap: 1rem; margin-top: 1.5rem; }
+  .btn-primary {
+    flex: 1; padding: 13px 24px; background: var(--green); color: white;
+    border: none; border-radius: 50px; cursor: pointer; font-weight: 800;
+    font-family: 'Nunito', sans-serif; font-size: 1rem;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--muted); cursor: not-allowed; }
+  .btn-back {
+    padding: 13px 24px; background: transparent; color: var(--muted);
+    border: 1.5px solid var(--border); border-radius: 50px; cursor: pointer;
+    font-weight: 700; font-family: 'Nunito', sans-serif; font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--green); color: var(--green-dark); }
+
+  .pay-error {
+    background: #fdf0ee; border: 1px solid #e8b4ae; color: var(--error);
+    border-radius: 10px; padding: 0.75rem 1rem; margin-top: 1rem;
+    font-size: 0.88rem; display: none;
+  }
+
+  /* SUCCESS */
+  .success-screen {
+    text-align: center; padding: 3rem 1rem;
+  }
+  .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .success-screen h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.75rem; }
+  .success-screen p { color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; }
+  .success-ref {
+    display: inline-block; background: var(--green-light); color: var(--green-dark);
+    font-weight: 800; font-size: 1.1rem; padding: 10px 24px; border-radius: 50px;
+    letter-spacing: 0.1em; margin-bottom: 1.5rem;
+  }
+
+  /* HIDDEN */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <span>Sparkle <em>MK</em></span>
+  </a>
+  <a class="nav-back" href="index.html">← Back to home</a>
+</nav>
+
+<main>
+  <div class="page-header">
+    <p class="page-label">Book online</p>
+    <h1>Book your sparkle ✨</h1>
+    <p>Takes less than 2 minutes · Secure payment via Stripe</p>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="step-ind-1">
+      <div class="step-num">1</div>
+      <div class="step-label">Service</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step" id="step-ind-2">
+      <div class="step-num">2</div>
+      <div class="step-label">Schedule</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-ind-3">
+      <div class="step-num">3</div>
+      <div class="step-label">Your details</div>
+    </div>
+    <div class="step-line" id="line-3"></div>
+    <div class="step" id="step-ind-4">
+      <div class="step-num">4</div>
+      <div class="step-label">Payment</div>
+    </div>
+  </div>
+
+  <div class="booking-card">
+
+    <div class="step-panel active" id="panel-1">
+      <h2 class="section-title">What type of clean?</h2>
+      <div class="service-options">
+        <div class="service-opt" data-service="domestic" onclick="selectService(this)">
+          <div class="opt-icon">🏠</div>
+          <div class="opt-name">Domestic</div>
+          <div class="opt-price">From £36</div>
+        </div>
+        <div class="service-opt" data-service="deep" onclick="selectService(this)">
+          <div class="opt-icon">✨</div>
+          <div class="opt-name">Deep Clean</div>
+          <div class="opt-price">From £72</div>
+        </div>
+        <div class="service-opt" data-service="office" onclick="selectService(this)">
+          <div class="opt-icon">🏢</div>
+          <div class="opt-name">Office</div>
+          <div class="opt-price">From £45</div>
+        </div>
+      </div>
+      <div class="field-error" id="err-service">Please select a service.</div>
+
+      <div class="form-group" style="margin-top:1.25rem">
+        <label>Property / Office size</label>
+        <select id="size">
+          <option value="">Select size...</option>
+          <option value="studio">Studio / 1 bed — 2h</option>
+          <option value="2bed">2 bed — 2.5h</option>
+          <option value="3bed">3 bed — 3h</option>
+          <option value="4bed">4+ bed — 4h</option>
+        </select>
+        <div class="field-error" id="err-size">Please select a size.</div>
+      </div>
+
+      <div class="form-group">
+        <label>How often?</label>
+        <div class="freq-options">
+          <div class="freq-opt selected" data-freq="one-off" onclick="selectFreq(this)">One-off</div>
+          <div class="freq-opt" data-freq="weekly" onclick="selectFreq(this)">Weekly</div>
+          <div class="freq-opt" data-freq="fortnightly" onclick="selectFreq(this)">Fortnightly</div>
+        </div>
+      </div>
+
+      <div class="price-summary" id="price-box" style="display:none">
+        <div class="price-row"><span>Subtotal</span><span id="ps-subtotal">—</span></div>
+        <div class="price-row discount" id="ps-disc-row" style="display:none"><span id="ps-disc-label">Discount</span><span id="ps-discount">—</span></div>
+        <div class="price-row total"><span>Total</span><span id="ps-total">—</span></div>
+      </div>
+
+      <div class="btn-nav">
+        <button class="btn-primary" onclick="goStep(2)">Next: Schedule →</button>
+      </div>
+    </div>
+
+    <div class="step-panel" id="panel-2">
+      <h2 class="section-title">When would you like us?</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="date">
+          <div class="field-error" id="err-date">Please pick a date.</div>
+        </div>
+        <div class="form-group">
+          <label>Preferred time</label>
+          <select id="time">
+            <option value="">Select...</option>
+            <option value="08:00">8:00 AM</option>
+            <option value="09:00">9:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="13:00">1:00 PM</option>
+            <option value="14:00">2:00 PM</option>
+            <option value="15:00">3:00 PM</option>
+            <option value="16:00">4:00 PM</option>
+          </select>
+          <div class="field-error" id="err-time">Please select a time.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Full address</label>
+        <input type="text" id="address" placeholder="12 High Street, Milton Keynes, MK1 1AA">
+        <div class="field-error" id="err-address">Please enter your address.</div>
+      </div>
+      <div class="form-group">
+        <label>Special notes (optional)</label>
+        <textarea id="notes" placeholder="Pets at home, access instructions, areas to focus on..."></textarea>
+      </div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-primary" onclick="goStep(3)">Next: Your details →</button>
+      </div>
+    </div>
+
+    <div class="step-panel" id="panel-3">
+      <h2 class="section-title">Your contact details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" id="fname" placeholder="Jane">
+          <div class="field-error" id="err-fname">Required.</div>
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input type="text" id="lname" placeholder="Smith">
+          <div class="field-error" id="err-lname">Required.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="jane@example.com">
+        <div class="field-error" id="err-email">Please enter a valid email.</div>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="phone" placeholder="+44 7700 000000">
+        <div class="field-error" id="err-phone">Required.</div>
+      </div>
+
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label>Promo Code</label>
+        <div class="promo-wrapper">
+          <input type="text" id="promo-code" placeholder="Enter code (e.g. SPARKLELAUNCH)" style="text-transform: uppercase;">
+          <button type="button" class="btn-promo" onclick="applyPromoCode()">Apply</button>
+        </div>
+        <div id="promo-msg" class="promo-message"></div>
+      </div>
+
+      <div class="price-summary">
+        <div style="font-weight:800; font-size:0.85rem; margin-bottom:0.75rem; color:var(--green-dark);">Order summary</div>
+        <div class="price-row"><span>Service</span><span id="sum-service">—</span></div>
+        <div class="price-row"><span>Size</span><span id="sum-size">—</span></div>
+        <div class="price-row"><span>Frequency</span><span id="sum-freq">—</span></div>
+        <div class="price-row"><span>Date</span><span id="sum-date">—</span></div>
+        <div class="price-row discount" id="sum-disc-row" style="display:none"><span id="sum-disc-label">Discount</span><span id="sum-discount">—</span></div>
+        <div class="price-row total"><span>Total</span><span id="sum-total">—</span></div>
+      </div>
+
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-primary" id="pay-btn" onclick="submitBooking()">Pay £<span id="btn-total">—</span> securely →</button>
+      </div>
+      <div class="pay-error" id="pay-error"></div>
+    </div>
+
+    <div class="step-panel" id="panel-success">
+      <div class="success-screen">
+        <div class="success-icon">🎉</div>
+        <h2>You're all booked!</h2>
+        <p>Thank you for choosing Sparkle MK. Your booking is confirmed and you'll receive a confirmation email shortly.</p>
+        <div class="success-ref" id="success-ref">SMK-XXXXXX</div>
+        <p style="font-size:0.85rem; color:var(--muted)">Keep this reference number for your records.</p>
+        <div style="margin-top:2rem">
+          <a href="index.html" class="btn-primary" style="text-decoration:none; display:inline-block; padding:12px 28px;">← Back to home</a>
+        </div>
+      </div>
+    </div>
+
+  </div></main>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────
+const CREATE_CHECKOUT_URL = 'https://uefmddsvlmacmyunnswv.supabase.co/functions/v1/create-checkout';
+
+// ─── PRICING DATA ─────────────────────────────────────────────────────────
+const SIZES = {
+  'studio': { label: 'Studio / 1 bed', hours: 2 },
+  '2bed':   { label: '2 bed',          hours: 2.5 },
+  '3bed':   { label: '3 bed',          hours: 3 },
+  '4bed':   { label: '4+ bed',         hours: 4 },
+};
+const DEEP_MULTIPLIER = 2; 
+const OFFICE_MULTIPLIER = 1.25 
+const RATE = 18;
+
+// ─── STATE ────────────────────────────────────────────────────────────────
+let state = {
+  service: '', size: '', frequency: 'one-off',
+  date: '', time: '', address: '', notes: '',
+  fname: '', lname: '', email: '', phone: '',
+  subtotal: 0, discount: 0, discount_pct: 0, total: 0,
+  appliedPromo: '' // Memorizza l'eventuale codice valido inserito
+};
+
+// ─── SERVICE SELECT ───────────────────────────────────────────────────────
+function selectService(el) {
+  document.querySelectorAll('.service-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.service = el.dataset.service;
+
+  const sizeEl = document.getElementById('size');
+  if (state.service === 'deep') {
+    sizeEl.innerHTML = `
+      <option value="">Select size...</option>
+      <option value="studio">Studio / 1 bed — 4h (£72)</option>
+      <option value="2bed">2 bed — 5h (£90)</option>
+      <option value="3bed">3 bed — 6h (£108)</option>
+      <option value="4bed">4+ bed — 8h (£144)</option>`;
+  } else if (state.service === 'office') {
+    sizeEl.innerHTML = `
+      <option value="">Select size...</option>
+      <option value="studio">Small (up to 5 desks) — 2h</option>
+      <option value="2bed">Medium (up to 15 desks) — 3h</option>
+      <option value="3bed">Large (15+ desks) — 4h</option>
+      <option value="4bed">Extra large — 5h</option>`;
+  } else {
+    sizeEl.innerHTML = `
+      <option value="">Select size...</option>
+      <option value="studio">Studio / 1 bed — 2h</option>
+      <option value="2bed">2 bed — 2.5h</option>
+      <option value="3bed">3 bed — 3h</option>
+      <option value="4bed">4+ bed — 4h</option>`;
+  }
+  state.size = '';
+  calcPrice();
+}
+
+function selectFreq(el) {
+  document.querySelectorAll('.freq-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.frequency = el.dataset.freq;
+  calcPrice();
+}
+
+document.getElementById('size').addEventListener('change', function() {
+  state.size = this.value;
+  calcPrice();
+});
+
+// ─── PROMO CODE LOGIC ─────────────────────────────────────────────────────
+function applyPromoCode() {
+  const input = document.getElementById('promo-code');
+  const code = input.value.trim().toUpperCase();
+  const msgEl = document.getElementById('promo-msg');
+  
+  msgEl.className = 'promo-message';
+  msgEl.style.display = 'none';
+
+  if (!state.size) {
+    msgEl.textContent = 'Please configure your service and size first.';
+    msgEl.classList.add('error');
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  if (!code) {
+    state.appliedPromo = '';
+    calcPrice();
+    return;
+  }
+
+  if (code === 'SPARKLELAUNCH' || code === 'TESTMARCO') {
+    state.appliedPromo = code;
+    msgEl.textContent = `Code "${code}" applied successfully!`;
+    msgEl.classList.add('success');
+    msgEl.style.display = 'block';
+  } else {
+    state.appliedPromo = '';
+    msgEl.textContent = 'Invalid promo code.';
+    msgEl.classList.add('error');
+    msgEl.style.display = 'block';
+  }
+
+  calcPrice();
+  updateSummary();
+}
+
+// ─── PRICE CALC ───────────────────────────────────────────────────────────
+function calcPrice() {
+  if (!state.size) { document.getElementById('price-box').style.display = 'none'; return; }
+  let hours = SIZES[state.size].hours;
+  if (state.service === 'deep') hours *= DEEP_MULTIPLIER;
+  if (state.service === 'office') hours *= OFFICE_MULTIPLIER;
+  
+  const subtotal = Math.round(hours * RATE * 100) / 100;
+  let discount = 0;
+  let disc_pct = 0;
+  let total = subtotal;
+
+  // Applica le regole custom basate sui codici sconto
+  if (state.appliedPromo === 'SPARKLELAUNCH') {
+    disc_pct = 0.20; // 20%
+    discount = Math.round(subtotal * disc_pct * 100) / 100;
+    total = Math.round((subtotal - discount) * 100) / 100;
+  } else if (state.appliedPromo === 'TESTMARCO') {
+    total = 1.00; // Imposta il totale forzatamente a 1
+    discount = Math.round((subtotal - total) * 100) / 100;
+    disc_pct = subtotal > 0 ? (discount / subtotal) : 0;
+  }
+
+  state.subtotal = subtotal; 
+  state.discount = discount;
+  state.discount_pct = disc_pct; 
+  state.total = total;
+
+  const box = document.getElementById('price-box');
+  box.style.display = 'block';
+  document.getElementById('ps-subtotal').textContent = '£' + subtotal.toFixed(2);
+  document.getElementById('ps-total').textContent = '£' + total.toFixed(2);
+  document.getElementById('btn-total').textContent = total.toFixed(2);
+
+  const discRow = document.getElementById('ps-disc-row');
+  if (discount > 0) {
+    discRow.style.display = 'flex';
+    document.getElementById('ps-disc-label').textContent = state.appliedPromo === 'TESTMARCO' ? 'Promo (Special Price)' : `Discount Promo (${Math.round(disc_pct*100)}%)`;
+    document.getElementById('ps-discount').textContent = '−£' + discount.toFixed(2);
+  } else {
+    discRow.style.display = 'none';
+  }
+}
+
+// ─── STEPS ────────────────────────────────────────────────────────────────
+let currentStep = 1;
+
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+
+  syncStateFromInputs();
+  updateSummary();
+
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+
+  for (let i = 1; i <= 4; i++) {
+    const ind = document.getElementById('step-ind-' + i);
+    ind.classList.remove('active', 'done');
+    if (i < n) ind.classList.add('done');
+    else if (i === n) ind.classList.add('active');
+  }
+  for (let i = 1; i <= 3; i++) {
+    const line = document.getElementById('line-' + i);
+    line.classList.toggle('done', i < n);
+  }
+
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function syncStateFromInputs() {
+  state.size      = document.getElementById('size').value;
+  state.date      = document.getElementById('date').value;
+  state.time      = document.getElementById('time').value;
+  state.address   = document.getElementById('address').value.trim();
+  state.notes     = document.getElementById('notes').value.trim();
+  state.fname     = document.getElementById('fname').value.trim();
+  state.lname     = document.getElementById('lname').value.trim();
+  state.email     = document.getElementById('email').value.trim();
+  state.phone     = document.getElementById('phone').value.trim();
+}
+
+// ─── VALIDATION ───────────────────────────────────────────────────────────
+function validateStep(n) {
+  let valid = true;
+  if (n === 1) {
+    if (!state.service) { show('err-service'); valid = false; } else hide('err-service');
+    if (!document.getElementById('size').value) { show('err-size'); valid = false; } else hide('err-size');
+  }
+  if (n === 2) {
+    if (!document.getElementById('date').value) { show('err-date'); valid = false; } else hide('err-date');
+    if (!document.getElementById('time').value) { show('err-time'); valid = false; } else hide('err-time');
+    if (!document.getElementById('address').value.trim()) { show('err-address'); valid = false; } else hide('err-address');
+  }
+  if (n === 3) {
+    if (!document.getElementById('fname').value.trim()) { show('err-fname'); valid = false; } else hide('err-fname');
+    if (!document.getElementById('lname').value.trim()) { show('err-lname'); valid = false; } else hide('err-lname');
+    const em = document.getElementById('email').value.trim();
+    if (!em || !em.includes('@')) { show('err-email'); valid = false; } else hide('err-email');
+    if (!document.getElementById('phone').value.trim()) { show('err-phone'); valid = false; } else hide('err-phone');
+  }
+  return valid;
+}
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+// ─── SUMMARY ──────────────────────────────────────────────────────────────
+const FREQ_LABELS = { 'one-off': 'One-off', 'weekly': 'Weekly', 'fortnightly': 'Fortnightly' };
+const SVC_LABELS  = { 'domestic': 'Domestic Cleaning', 'deep': 'Deep Cleaning', 'office': 'Office Cleaning' };
+
+function updateSummary() {
+  calcPrice();
+  document.getElementById('sum-service').textContent = SVC_LABELS[state.service] || '—';
+  document.getElementById('sum-size').textContent    = state.size ? SIZES[state.size].label : '—';
+  document.getElementById('sum-freq').textContent    = FREQ_LABELS[state.frequency] || '—';
+  document.getElementById('sum-date').textContent    = state.date ? new Date(state.date + 'T12:00').toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'long'}) : '—';
+  document.getElementById('sum-total').textContent   = '£' + state.total.toFixed(2);
+  document.getElementById('btn-total').textContent   = state.total.toFixed(2);
+  
+  const discRow = document.getElementById('sum-disc-row');
+  if (state.discount > 0) {
+    discRow.style.display = 'flex';
+    document.getElementById('sum-disc-label').textContent = state.appliedPromo === 'TESTMARCO' ? 'Promo Code Applied' : `Promo Discount (${Math.round(state.discount_pct*100)}%)`;
+    document.getElementById('sum-discount').textContent   = '−£' + state.discount.toFixed(2);
+  } else {
+    discRow.style.display = 'none';
+  }
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────────────────────
+async function submitBooking() {
+  syncStateFromInputs();
+  if (!validateStep(3)) return;
+
+  const btn = document.getElementById('pay-btn');
+  const errEl = document.getElementById('pay-error');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to Stripe…';
+
+  try {
+    const ref = 'SMK-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    sessionStorage.setItem('smk_pending_ref', ref);
+
+    const res = await fetch(CREATE_CHECKOUT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ref,
+        service:      state.service,
+        frequency:    state.frequency,
+        size:         state.size,
+        fname:        state.fname,
+        lname:        state.lname,
+        name:         state.fname + ' ' + state.lname,
+        email:        state.email,
+        phone:        state.phone,
+        address:      state.address,
+        date:         state.date,
+        time:         state.time,
+        notes:        state.notes,
+        subtotal:     state.subtotal,
+        discount:     state.discount,
+        discount_pct: state.discount_pct,
+        total:        state.total,
+        promo_code:   state.appliedPromo // invia il codice promozionale a Supabase/Stripe se presente
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Server error');
+
+    window.location.href = data.url; 
+  } catch (e) {
+    errEl.textContent = 'Connection error: ' + e.message + '. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Pay £<span id=\"btn-total\">' + state.total.toFixed(2) + '</span> securely →';
+  }
+}
+
+// ─── RETURN FROM STRIPE ───────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('date').min = tomorrow.toISOString().split('T')[0];
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const ref = sessionStorage.getItem('smk_pending_ref') || '';
+    sessionStorage.removeItem('smk_pending_ref');
+
+    for (let i = 1; i <= 4; i++) {
+      const ind = document.getElementById('step-ind-' + i);
+      ind.classList.remove('active');
+      ind.classList.add('done');
+    }
+    for (let i = 1; i <= 3; i++) document.getElementById('line-' + i).classList.add('done');
+
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-success').classList.add('active');
+    document.getElementById('success-ref').textContent = ref || 'SMK-CONFIRMED';
+  }
+
+  if (params.get('cancelled') === 'true') {
+    const errEl = document.getElementById('pay-error');
+    errEl.textContent = 'Payment was cancelled. Your details are saved — just click Pay again when ready.';
+    errEl.style.display = 'block';
+    goStep(3);
+  }
+});
+</script>
+</body>
+</html>
