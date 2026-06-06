@@ -257,10 +257,10 @@
         <label>Property / Office size</label>
         <select id="size">
           <option value="">Select size...</option>
-          <option value="studio">Studio / 1 bed — 2h (£36)</option>
-          <option value="2bed">2 bed — 2.5h (£45)</option>
-          <option value="3bed">3 bed — 3h (£54)</option>
-          <option value="4bed">4+ bed — 4h (£72)</option>
+          <option value="studio">Studio / 1 bed — 2h</option>
+          <option value="2bed">2 bed — 2.5h</option>
+          <option value="3bed">3 bed — 3h</option>
+          <option value="4bed">4+ bed — 4h</option>
         </select>
         <div class="field-error" id="err-size">Please select a size.</div>
       </div>
@@ -429,17 +429,17 @@ if (state.service === 'deep') {
   } else if (state.service === 'office') {
     sizeEl.innerHTML = `
       <option value="">Select size...</option>
-      <option value="studio">Small (up to 5 desks) — 2h (£36)</option>
-      <option value="2bed">Medium (up to 15 desks) — 3h (£54)</option>
-      <option value="3bed">Large (15+ desks) — 4h (£72)</option>
-      <option value="4bed">Extra large — 5h (£90)</option>`;
+      <option value="studio">Small (up to 5 desks) — 2h</option>
+      <option value="2bed">Medium (up to 15 desks) — 3h</option>
+      <option value="3bed">Large (15+ desks) — 4h</option>
+      <option value="4bed">Extra large — 5h</option>`;
   } else {
     sizeEl.innerHTML = `
       <option value="">Select size...</option>
-      <option value="studio">Studio / 1 bed — 2h (£36)</option>
-      <option value="2bed">2 bed — 2.5h (£45)</option>
-      <option value="3bed">3 bed — 3h (£54)</option>
-      <option value="4bed">4+ bed — 4h (£72)</option>`;
+      <option value="studio">Studio / 1 bed — 2h</option>
+      <option value="2bed">2 bed — 2.5h</option>
+      <option value="3bed">3 bed — 3h</option>
+      <option value="4bed">4+ bed — 4h</option>`;
   }
   state.size = '';
   calcPrice();
